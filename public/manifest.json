@@ -1,0 +1,9 @@
+{
+    "name": "Plan de Fidelización Harker Lloreda",
+    "short_name": "HL Puntos",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f9fafb",
+    "theme_color": "#111827",
+    "icons": []
+}
