@@ -114,29 +114,29 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Título (opcional)</label>
-            <input type="text" wire:model="title" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="title" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <div>
             <label class="block text-sm font-medium">Enlace (opcional)</label>
-            <input type="text" wire:model="link_url" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="link_url" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('link_url') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Vigente desde</label>
-                <input type="date" wire:model="starts_at" class="mt-1 w-full rounded border-gray-300">
+                <input type="date" wire:model="starts_at" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
             <div>
                 <label class="block text-sm font-medium">Vigente hasta</label>
-                <input type="date" wire:model="ends_at" class="mt-1 w-full rounded border-gray-300">
+                <input type="date" wire:model="ends_at" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-medium">Orden</label>
-            <input type="number" wire:model="order" class="mt-1 w-full rounded border-gray-300">
+            <input type="number" wire:model="order" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <label class="flex items-center gap-2">
@@ -161,11 +161,11 @@ new class extends Component
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">
+            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
             </button>
             @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-gray-500">Cancelar</button>
+                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
@@ -190,13 +190,13 @@ new class extends Component
                     </td>
                     <td class="p-3">{{ $banner->is_active ? 'Sí' : 'No' }}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button wire:click="edit({{ $banner->id }})" class="text-blue-600">Editar</button>
+                        <button wire:click="edit({{ $banner->id }})" class="text-azul">Editar</button>
                         <button wire:click="delete({{ $banner->id }})" wire:confirm="¿Eliminar este banner?" class="text-red-600">Eliminar</button>
                     </td>
                 </tr>
             @endforeach
             @if ($this->banners->isEmpty())
-                <tr><td colspan="5" class="p-3 text-gray-500">Sin banners todavía.</td></tr>
+                <tr><td colspan="5" class="p-3 text-muted">Sin banners todavía.</td></tr>
             @endif
         </tbody>
     </table>

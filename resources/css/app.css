@@ -3,9 +3,34 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/*
+ * Design tokens de marca Harker / Lloreda, extraídos del Manual de Identidad
+ * 2023 y verificados contra el SCSS del sitio en producción. Ver el design
+ * system de referencia en D:\NAS_DATA\Code\Clientes\HyL\design-system-harker-lloreda.html
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Paleta principal */
+    --color-azul: #335c82; /* Harker — color principal de marca */
+    --color-azul-dark: #2a4c6c;
+    --color-lloreda: #32495e; /* secundario */
+    --color-marino: #2b3c4c; /* acento oscuro (h4, sombras) */
+    --color-dermo: #f9d2a4; /* acento cálido — solo fondo/detalle, nunca texto */
+
+    /* Paleta extendida (línea de prevención) */
+    --color-teal: #5ebbc0;
+    --color-teal-light: #b1dde0;
+
+    /* Neutros */
+    --color-ink: #1e1e1e; /* texto principal */
+    --color-muted: #76777a; /* texto secundario */
+    --color-steel: #a3a8ad;
+    --color-mist: #9da9b5;
+
+    --radius-brand: 20px;
+    --radius-brand-sm: 15px;
 }
 
 /* Detalles para que el portal se sienta nativo en móvil, no solo "responsive". */
@@ -16,6 +41,7 @@ html {
 body {
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
+    color: var(--color-ink);
 }
 
 input,
@@ -23,4 +49,8 @@ textarea,
 select,
 button {
     font-size: 16px; /* evita el zoom automático de iOS Safari al enfocar un input */
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-sans);
 }

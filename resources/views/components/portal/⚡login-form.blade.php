@@ -59,20 +59,20 @@ new class extends Component
     <form wire:submit="login" class="space-y-4">
         <div>
             <label class="block text-sm font-medium">Documento o correo</label>
-            <input type="text" wire:model="identifier" class="mt-1 w-full rounded border-gray-300" autofocus>
+            <input type="text" wire:model="identifier" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none" autofocus>
             @error('identifier') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Contraseña</label>
-            <input type="password" wire:model="password" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="password" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('password') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
-        <button type="submit" class="w-full rounded-lg bg-gray-900 text-white py-2.5 font-medium">Ingresar</button>
+        <button type="submit" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Ingresar</button>
     </form>
 
-    <p class="text-sm text-center text-gray-500">
+    <p class="text-sm text-center text-muted">
         ¿No tienes cuenta? <a href="{{ route('portal.register') }}" class="underline">Regístrate aquí</a>
     </p>
 </div>

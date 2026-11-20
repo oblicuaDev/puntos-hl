@@ -43,13 +43,58 @@ docker compose exec app ./vendor/bin/pint        # formateo de código
 
 La suite usa SQLite en memoria (ver `phpunit.xml`), así que corre rápido y no toca la base de datos de desarrollo en MySQL.
 
-## Login al superadmin (SSO con WordPress)
+## WordPress de desarrollo: copia real de producción
 
-1. En el WordPress de prueba (http://localhost:8081/wp-admin), instala/activa el plugin ubicado en `wordpress-plugin/hl-puntos-sso-bridge/` (ya está montado como volumen en `docker-compose.yml`, solo falta activarlo desde Plugins).
-2. En **Ajustes → HL Puntos SSO Bridge**, configura:
-   - URL de la app: `http://localhost:8080`
-   - Secreto compartido: debe ser **idéntico** al `WP_SSO_SHARED_SECRET` del `.env` de Laravel.
-3. Crea o usa un usuario de WordPress con rol `administrator` (acceso total al superadmin) o `asesor_fidelizacion` (rol que el plugin crea solo; acceso a pacientes/ventas).
+El WordPress del docker-compose (`http://localhost:8081`) **no es un WordPress genérico**: se restaura desde un backup real de `webadmin.harkerlloreda.com` (tema, plugins y base de datos reales), para desarrollar/probar el plugin SSO contra roles y datos reales en vez de un sitio vacío. Esto nunca toca producción.
+
+### Restaurar un backup (primera vez, o para refrescar con datos más recientes)
+
+Dado un backup como el de `D:\NAS_DATA\Code\Clientes\HyL\BU-YYYYMMDD\` (tema `.zip`, `plugins.zip`, dump `.sql`):
+
+```bash
+# 1. Extraer tema y plugins dentro del proyecto (gitignored, ver wordpress-dev/)
+mkdir -p wordpress-dev/wp-content/themes wordpress-dev/wp-content/plugins wordpress-dev/db
+unzip -q ".../HarkerLloredaTheme.zip" -d wordpress-dev/wp-content/themes
+unzip -q ".../plugins.zip" -d wordpress-dev/wp-content
+cp ".../carlos_hl_sbvo0.sql" wordpress-dev/db/
+
+# 2. Reset completo de los contenedores de WP (son desechables)
+docker compose stop wordpress mysql-wp
+docker compose rm -f wordpress mysql-wp
+docker volume rm hl-fidelizacion_wp_data hl-fidelizacion_mysql_wp_data
+
+# 3. Levantar la base de datos e importar el dump real
+docker compose up -d mysql-wp
+docker compose exec -T mysql-wp mysql -uroot -psecret wordpress < wordpress-dev/db/carlos_hl_sbvo0.sql
+
+# 4. Levantar WordPress (usa WORDPRESS_TABLE_PREFIX del dump — ver docker-compose.yml)
+docker compose up -d wordpress
+
+# 5. Apuntar el sitio a localhost en vez del dominio real
+./docker/wp-cli.sh search-replace "https://webadmin.harkerlloreda.com" "http://localhost:8081" --all-tables --report-changed-only
+
+# 6. Resetear la contraseña de un usuario real para poder entrar en local
+#    (el dump trae los hashes reales de producción, inútiles en local)
+./docker/wp-cli.sh user list --fields=ID,user_login,user_email,roles
+./docker/wp-cli.sh user update <user_login> --user_pass=dev-local-only-2026
+
+# 7. Activar nuestro plugin SSO y sincronizar su secreto/URL con el .env de Laravel
+./docker/wp-cli.sh plugin activate hl-puntos-sso-bridge
+./docker/wp-cli.sh option update hlfid_sso_shared_secret "<mismo valor que WP_SSO_SHARED_SECRET en .env>"
+./docker/wp-cli.sh option update hlfid_sso_app_url "http://localhost:8080"
+```
+
+`./docker/wp-cli.sh` corre wp-cli (imagen oficial `wordpress:cli`) contra los mismos volúmenes que el servicio `wordpress` — más cómodo que repetir `docker run` a mano.
+
+Si el `.sql` usa un prefijo de tabla distinto a `VcgIheUb_` (busca `CREATE TABLE` en el dump), actualiza `WORDPRESS_TABLE_PREFIX` en `docker-compose.yml` y en `docker/wp-cli.sh` antes del paso 4.
+
+**Nota de seguridad**: nunca pegues contraseñas/hashes reales del dump en commits, chats o este README — solo IDs/roles.
+
+### Login al superadmin (SSO con WordPress)
+
+1. El plugin `wordpress-plugin/hl-puntos-sso-bridge/` ya está montado y activo (ver arriba).
+2. En **Ajustes → HL Puntos SSO Bridge** del wp-admin, confirma que la URL de la app y el secreto compartido coinciden con el `.env` de Laravel.
+3. Usa un usuario con rol `administrator` (acceso total al superadmin) o `asesor_fidelizacion` (rol que el plugin crea solo; acceso a pacientes/ventas).
 4. Desde el menú **Panel de Fidelización** del wp-admin, entra al superadmin — el plugin genera un JWT de corta vida y redirige a `/admin/sso/callback`.
 
 En producción, este mismo plugin se instala en `webadmin.harkerlloreda.com` (pendiente de acceso — ver sección de pendientes).

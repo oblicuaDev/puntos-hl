@@ -130,12 +130,12 @@ new class extends Component
             <label class="block text-sm font-medium">Paciente</label>
 
             @if ($selectedPatientLabel)
-                <div class="mt-1 flex items-center justify-between rounded border border-gray-300 px-3 py-2 text-sm">
+                <div class="mt-1 flex items-center justify-between rounded border border-black/15 px-3 py-2 text-sm">
                     <span>{{ $selectedPatientLabel }}</span>
                     <button type="button" wire:click="clearPatient" class="text-red-600">Cambiar</button>
                 </div>
             @else
-                <input type="text" wire:model.live.debounce.300ms="patientSearch" placeholder="Buscar por documento o nombre..." class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model.live.debounce.300ms="patientSearch" placeholder="Buscar por documento o nombre..." class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
 
                 @if ($this->patientMatches->isNotEmpty())
                     <ul class="mt-1 border rounded divide-y text-sm">
@@ -154,7 +154,7 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Procedimiento (opcional)</label>
-            <select wire:model="procedure_id" class="mt-1 w-full rounded border-gray-300">
+            <select wire:model="procedure_id" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 <option value="">Sin procedimiento específico</option>
                 @foreach ($this->procedures as $procedure)
                     <option value="{{ $procedure->id }}">{{ $procedure->name }}</option>
@@ -164,22 +164,22 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Valor de la venta (COP)</label>
-            <input type="number" wire:model="amount_cop" class="mt-1 w-full rounded border-gray-300">
+            <input type="number" wire:model="amount_cop" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('amount_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-            <p class="text-xs text-gray-500 mt-1">Tasa vigente: {{ number_format(setting('cop_per_point', 100), 0, ',', '.') }} COP por punto.</p>
+            <p class="text-xs text-muted mt-1">Tasa vigente: {{ number_format(setting('cop_per_point', 100), 0, ',', '.') }} COP por punto.</p>
         </div>
 
         <div>
             <label class="block text-sm font-medium">Fecha de la venta</label>
-            <input type="date" wire:model="sale_date" class="mt-1 w-full rounded border-gray-300">
+            <input type="date" wire:model="sale_date" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <div>
             <label class="block text-sm font-medium">Notas</label>
-            <textarea wire:model="notes" class="mt-1 w-full rounded border-gray-300"></textarea>
+            <textarea wire:model="notes" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none"></textarea>
         </div>
 
-        <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">Registrar venta</button>
+        <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Registrar venta</button>
     </form>
 
     <table class="w-full bg-white rounded-xl shadow overflow-hidden text-sm">
@@ -203,7 +203,7 @@ new class extends Component
                 </tr>
             @endforeach
             @if ($this->recentSales->isEmpty())
-                <tr><td colspan="5" class="p-3 text-gray-500">Sin ventas todavía.</td></tr>
+                <tr><td colspan="5" class="p-3 text-muted">Sin ventas todavía.</td></tr>
             @endif
         </tbody>
     </table>

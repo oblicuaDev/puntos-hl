@@ -104,11 +104,19 @@ function hlfid_sso_admin_menu(): void
 add_action('admin_menu', 'hlfid_sso_admin_menu');
 
 /**
- * Página "Panel de Fidelización": solo visible/útil para administrator y
- * asesor_fidelizacion. Genera el JWT y redirige a la app Laravel.
+ * El redirect real ocurre aquí, en admin_init — no en el callback de
+ * add_menu_page. WordPress ya envía el HTML completo del wp-admin (DOCTYPE,
+ * <head>, barra de administración) ANTES de invocar el callback de una
+ * página de menú, así que un wp_redirect() disparado desde ahí llega con
+ * headers ya enviados y falla en silencio (la página se corta a medias en
+ * vez de redirigir). admin_init corre antes de cualquier salida.
  */
-function hlfid_sso_launch_page(): void
+function hlfid_sso_maybe_redirect(): void
 {
+    if (($_GET['page'] ?? '') !== 'hlfid-sso-launch') {
+        return;
+    }
+
     $user = wp_get_current_user();
     $role = hlfid_sso_map_role($user);
 
@@ -127,6 +135,17 @@ function hlfid_sso_launch_page(): void
 
     wp_redirect($callbackUrl);
     exit;
+}
+add_action('admin_init', 'hlfid_sso_maybe_redirect');
+
+/**
+ * Callback de la página de menú: en operación normal, admin_init ya
+ * redirigió antes de llegar aquí. Esto solo se ve si, por lo que sea,
+ * admin_init no pudo ejecutar el redirect (no debería pasar).
+ */
+function hlfid_sso_launch_page(): void
+{
+    echo '<p>Redirigiendo al Plan de Fidelización…</p>';
 }
 
 /** Mapea el rol de WP al rol interno esperado por Laravel, o null si no aplica. */

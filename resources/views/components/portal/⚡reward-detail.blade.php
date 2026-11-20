@@ -74,14 +74,14 @@ new class extends Component
     </div>
 
     <h1 class="text-xl font-semibold">{{ $reward->title }}</h1>
-    <p class="text-gray-600 text-sm">{{ $reward->short_description }}</p>
+    <p class="text-muted text-sm">{{ $reward->short_description }}</p>
 
     <div class="prose prose-sm max-w-none">
         {!! $reward->body_html !!}
     </div>
 
     <div class="bg-white rounded-xl shadow p-4 space-y-4 sticky bottom-16">
-        <p class="text-sm text-gray-500">Tu saldo: {{ number_format($this->patientBalance) }} puntos</p>
+        <p class="text-sm text-muted">Tu saldo: {{ number_format($this->patientBalance) }} puntos</p>
 
         @if ($this->limits->maxPoints <= 0)
             <p class="text-sm text-red-600">No tienes suficientes puntos para este premio.</p>
@@ -104,7 +104,7 @@ new class extends Component
             </div>
 
             @if ($this->limits->canAffordPointsOnly($this->patientBalance))
-                <button wire:click="usePointsOnly" type="button" class="text-sm underline text-gray-500">
+                <button wire:click="usePointsOnly" type="button" class="text-sm underline text-muted">
                     Pagar 100% con puntos
                 </button>
             @endif
@@ -116,7 +116,7 @@ new class extends Component
         @endif
 
         <button wire:click="checkout" {{ $this->limits->maxPoints <= 0 ? 'disabled' : '' }}
-                class="w-full rounded-lg bg-gray-900 text-white py-2.5 font-medium disabled:opacity-50">
+                class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul disabled:opacity-50 disabled:hover:bg-azul disabled:hover:text-white disabled:hover:border-transparent">
             Canjear
         </button>
     </div>

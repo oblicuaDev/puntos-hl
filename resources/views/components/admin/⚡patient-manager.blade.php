@@ -120,13 +120,13 @@ new class extends Component
         <h2 class="font-semibold">{{ $editingId ? 'Editar paciente' : 'Registrar paciente' }}</h2>
 
         @if (! $editingId)
-            <p class="text-xs text-gray-500">La contraseña inicial del paciente será su número de documento. Se le pedirá cambiarla en su primer ingreso al portal.</p>
+            <p class="text-xs text-muted">La contraseña inicial del paciente será su número de documento. Se le pedirá cambiarla en su primer ingreso al portal.</p>
         @endif
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Tipo de documento</label>
-                <select wire:model="document_type" class="mt-1 w-full rounded border-gray-300">
+                <select wire:model="document_type" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                     <option value="CC">Cédula de ciudadanía</option>
                     <option value="CE">Cédula de extranjería</option>
                     <option value="TI">Tarjeta de identidad</option>
@@ -135,55 +135,55 @@ new class extends Component
             </div>
             <div>
                 <label class="block text-sm font-medium">Número de documento</label>
-                <input type="text" wire:model="document_number" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="document_number" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('document_number') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium">Nombres</label>
-                <input type="text" wire:model="first_name" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="first_name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('first_name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium">Apellidos</label>
-                <input type="text" wire:model="last_name" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="last_name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('last_name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium">Correo</label>
-                <input type="email" wire:model="email" class="mt-1 w-full rounded border-gray-300">
+                <input type="email" wire:model="email" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('email') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium">Teléfono</label>
-                <input type="text" wire:model="phone" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="phone" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
             <div class="col-span-2">
                 <label class="block text-sm font-medium">Dirección</label>
-                <input type="text" wire:model="address" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="address" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
             <div>
                 <label class="block text-sm font-medium">Ciudad</label>
-                <input type="text" wire:model="city" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="city" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
             <div>
                 <label class="block text-sm font-medium">Fecha de nacimiento</label>
-                <input type="date" wire:model="birthdate" class="mt-1 w-full rounded border-gray-300">
+                <input type="date" wire:model="birthdate" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">
+            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Registrar paciente' }}
             </button>
             @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-gray-500">Cancelar</button>
+                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
 
     <div class="bg-white rounded-xl shadow overflow-hidden">
         <div class="p-4 border-b">
-            <input type="text" wire:model.live.debounce.400ms="search" placeholder="Buscar por documento o nombre..." class="w-full rounded border-gray-300 text-sm">
+            <input type="text" wire:model.live.debounce.400ms="search" placeholder="Buscar por documento o nombre..." class="w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none text-sm">
         </div>
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-left">
@@ -203,7 +203,7 @@ new class extends Component
                         <td class="p-3">{{ $patient->phone }}</td>
                         <td class="p-3">{{ $patient->status === 'active' ? 'Activo' : 'Bloqueado' }}</td>
                         <td class="p-3 text-right space-x-2">
-                            <button wire:click="edit({{ $patient->id }})" class="text-blue-600">Editar</button>
+                            <button wire:click="edit({{ $patient->id }})" class="text-azul">Editar</button>
                             <button wire:click="toggleStatus({{ $patient->id }})" class="text-amber-600">
                                 {{ $patient->status === 'active' ? 'Bloquear' : 'Activar' }}
                             </button>
@@ -211,7 +211,7 @@ new class extends Component
                     </tr>
                 @endforeach
                 @if ($this->patients->isEmpty())
-                    <tr><td colspan="5" class="p-3 text-gray-500">Sin pacientes todavía.</td></tr>
+                    <tr><td colspan="5" class="p-3 text-muted">Sin pacientes todavía.</td></tr>
                 @endif
             </tbody>
         </table>

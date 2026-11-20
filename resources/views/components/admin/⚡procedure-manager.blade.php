@@ -68,18 +68,18 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Nombre</label>
-            <input type="text" wire:model="name" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Descripción</label>
-            <textarea wire:model="description" class="mt-1 w-full rounded border-gray-300"></textarea>
+            <textarea wire:model="description" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none"></textarea>
         </div>
 
         <div>
             <label class="block text-sm font-medium">Precio en puntos</label>
-            <input type="number" wire:model="points_price" class="mt-1 w-full rounded border-gray-300">
+            <input type="number" wire:model="points_price" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('points_price') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
@@ -89,11 +89,11 @@ new class extends Component
         </label>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">
+            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
             </button>
             @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-gray-500">Cancelar</button>
+                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
@@ -114,13 +114,13 @@ new class extends Component
                     <td class="p-3">{{ number_format($procedure->points_price, 0, ',', '.') }}</td>
                     <td class="p-3">{{ $procedure->is_active ? 'Sí' : 'No' }}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button wire:click="edit({{ $procedure->id }})" class="text-blue-600">Editar</button>
+                        <button wire:click="edit({{ $procedure->id }})" class="text-azul">Editar</button>
                         <button wire:click="delete({{ $procedure->id }})" wire:confirm="¿Eliminar este procedimiento?" class="text-red-600">Eliminar</button>
                     </td>
                 </tr>
             @endforeach
             @if ($this->procedures->isEmpty())
-                <tr><td colspan="4" class="p-3 text-gray-500">Sin procedimientos todavía.</td></tr>
+                <tr><td colspan="4" class="p-3 text-muted">Sin procedimientos todavía.</td></tr>
             @endif
         </tbody>
     </table>

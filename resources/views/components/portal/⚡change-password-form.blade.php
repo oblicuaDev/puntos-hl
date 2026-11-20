@@ -40,26 +40,26 @@ new class extends Component
 
 <div class="bg-white rounded-xl shadow p-6 space-y-4 mt-6">
     <h1 class="text-xl font-semibold">Cambiar contraseña</h1>
-    <p class="text-sm text-gray-500">Por seguridad, debes definir una nueva contraseña antes de continuar.</p>
+    <p class="text-sm text-muted">Por seguridad, debes definir una nueva contraseña antes de continuar.</p>
 
     <form wire:submit="updatePassword" class="space-y-4">
         <div>
             <label class="block text-sm font-medium">Contraseña actual</label>
-            <input type="password" wire:model="current_password" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="current_password" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('current_password') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Nueva contraseña</label>
-            <input type="password" wire:model="password" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="password" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('password') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Confirmar nueva contraseña</label>
-            <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
-        <button type="submit" class="w-full rounded-lg bg-gray-900 text-white py-2.5 font-medium">Guardar</button>
+        <button type="submit" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
     </form>
 </div>

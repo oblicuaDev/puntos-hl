@@ -1,6 +1,9 @@
 *.log
 .DS_Store
 /.claude
+# Copia local del WordPress de producción (plugins con licencia comercial +
+# dump de la BD real) usada solo para desarrollar el plugin SSO. Nunca a git.
+/wordpress-dev
 .env
 .env.backup
 .env.production

@@ -59,33 +59,33 @@ new class extends Component
 
     <div>
         <label class="block text-sm font-medium">Tasa de cambio (COP por punto)</label>
-        <input type="number" step="0.01" wire:model="cop_per_point" class="mt-1 w-full rounded border-gray-300">
+        <input type="number" step="0.01" wire:model="cop_per_point" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('cop_per_point') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">% mínimo en puntos para pago mixto</label>
-        <input type="number" step="0.1" wire:model="min_points_percentage" class="mt-1 w-full rounded border-gray-300">
+        <input type="number" step="0.1" wire:model="min_points_percentage" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('min_points_percentage') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">Vigencia de los puntos (meses)</label>
-        <input type="number" wire:model="points_expiration_months" class="mt-1 w-full rounded border-gray-300">
+        <input type="number" wire:model="points_expiration_months" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('points_expiration_months') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">Timeout de checkout abandonado (minutos)</label>
-        <input type="number" wire:model="abandoned_checkout_timeout_minutes" class="mt-1 w-full rounded border-gray-300">
+        <input type="number" wire:model="abandoned_checkout_timeout_minutes" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('abandoned_checkout_timeout_minutes') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">Correo de gerencia (notificación de canjes)</label>
-        <input type="email" wire:model="management_notification_email" class="mt-1 w-full rounded border-gray-300">
+        <input type="email" wire:model="management_notification_email" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('management_notification_email') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">Guardar</button>
+    <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
 </form>

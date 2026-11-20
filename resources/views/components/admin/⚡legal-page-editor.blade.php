@@ -47,7 +47,7 @@ new class extends Component
 
     <div>
         <label class="block text-sm font-medium">Título</label>
-        <input type="text" wire:model="title" class="mt-1 w-full rounded border-gray-300">
+        <input type="text" wire:model="title" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         @error('title') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
@@ -58,5 +58,5 @@ new class extends Component
         @error('body_html') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">Guardar</button>
+    <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
 </form>

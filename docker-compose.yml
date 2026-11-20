@@ -73,8 +73,10 @@ services:
       - "1025:1025" # smtp
     networks: [hl]
 
-  # --- WordPress efímero, solo para desarrollar/probar el plugin SSO ---
-  # (NO toca webadmin.harkerlloreda.com; es un sandbox local)
+  # --- WordPress de prueba, réplica del WP de producción (webadmin.harkerlloreda.com) ---
+  # Theme/plugins/BD reales (backup en D:\...\HyL\BU-20112026, importados a wordpress-dev/,
+  # gitignored). NO toca el WordPress de producción; es un sandbox local para
+  # desarrollar/probar el plugin SSO contra datos y roles reales.
   wordpress:
     image: wordpress:php8.3-apache
     ports:
@@ -84,8 +86,11 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: secret
+      WORDPRESS_TABLE_PREFIX: VcgIheUb_
     volumes:
       - wp_data:/var/www/html
+      - ./wordpress-dev/wp-content/themes/HarkerLloredaTheme:/var/www/html/wp-content/themes/HarkerLloredaTheme
+      - ./wordpress-dev/wp-content/plugins:/var/www/html/wp-content/plugins
       - ./wordpress-plugin/hl-puntos-sso-bridge:/var/www/html/wp-content/plugins/hl-puntos-sso-bridge
     depends_on:
       - mysql-wp

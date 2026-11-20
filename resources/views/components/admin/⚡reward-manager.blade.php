@@ -135,13 +135,13 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Título</label>
-            <input type="text" wire:model="title" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="title" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('title') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Categoría</label>
-            <select wire:model="category_id" class="mt-1 w-full rounded border-gray-300">
+            <select wire:model="category_id" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 <option value="">Sin categoría</option>
                 @foreach ($this->categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -151,7 +151,7 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Descripción corta</label>
-            <input type="text" wire:model="short_description" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="short_description" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <div wire:ignore x-data="{ content: @entangle('body_html') }">
@@ -163,13 +163,13 @@ new class extends Component
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Precio (COP)</label>
-                <input type="number" wire:model="price_cop" class="mt-1 w-full rounded border-gray-300">
+                <input type="number" wire:model="price_cop" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('price_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-                <p class="text-xs text-gray-500 mt-1">≈ {{ number_format($price_cop ? intdiv($price_cop, max((int) setting('cop_per_point', 100), 1)) : 0) }} puntos a la tasa actual.</p>
+                <p class="text-xs text-muted mt-1">≈ {{ number_format($price_cop ? intdiv($price_cop, max((int) setting('cop_per_point', 100), 1)) : 0) }} puntos a la tasa actual.</p>
             </div>
             <div>
                 <label class="block text-sm font-medium">Stock (vacío = ilimitado)</label>
-                <input type="number" wire:model="stock" class="mt-1 w-full rounded border-gray-300">
+                <input type="number" wire:model="stock" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             </div>
         </div>
 
@@ -202,11 +202,11 @@ new class extends Component
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">
+            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
             </button>
             @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-gray-500">Cancelar</button>
+                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
@@ -229,13 +229,13 @@ new class extends Component
                     <td class="p-3">${{ number_format($reward->price_cop, 0, ',', '.') }}</td>
                     <td class="p-3">{{ $reward->is_active ? 'Sí' : 'No' }}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button wire:click="edit({{ $reward->id }})" class="text-blue-600">Editar</button>
+                        <button wire:click="edit({{ $reward->id }})" class="text-azul">Editar</button>
                         <button wire:click="delete({{ $reward->id }})" wire:confirm="¿Eliminar este premio?" class="text-red-600">Eliminar</button>
                     </td>
                 </tr>
             @endforeach
             @if ($this->rewards->isEmpty())
-                <tr><td colspan="5" class="p-3 text-gray-500">Sin premios todavía.</td></tr>
+                <tr><td colspan="5" class="p-3 text-muted">Sin premios todavía.</td></tr>
             @endif
         </tbody>
     </table>

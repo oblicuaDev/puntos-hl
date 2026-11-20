@@ -68,7 +68,7 @@ new class extends Component
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Tipo doc.</label>
-                <select wire:model="document_type" class="mt-1 w-full rounded border-gray-300">
+                <select wire:model="document_type" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                     <option value="CC">CC</option>
                     <option value="CE">CE</option>
                     <option value="TI">TI</option>
@@ -77,49 +77,49 @@ new class extends Component
             </div>
             <div>
                 <label class="block text-sm font-medium">Número</label>
-                <input type="text" wire:model="document_number" class="mt-1 w-full rounded border-gray-300">
+                <input type="text" wire:model="document_number" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('document_number') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-medium">Nombres</label>
-            <input type="text" wire:model="first_name" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="first_name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('first_name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Apellidos</label>
-            <input type="text" wire:model="last_name" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="last_name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('last_name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Correo</label>
-            <input type="email" wire:model="email" class="mt-1 w-full rounded border-gray-300">
+            <input type="email" wire:model="email" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('email') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Teléfono</label>
-            <input type="text" wire:model="phone" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="phone" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <div>
             <label class="block text-sm font-medium">Contraseña</label>
-            <input type="password" wire:model="password" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="password" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('password') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Confirmar contraseña</label>
-            <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded border-gray-300">
+            <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
-        <button type="submit" class="w-full rounded-lg bg-gray-900 text-white py-2.5 font-medium">Crear cuenta</button>
+        <button type="submit" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Crear cuenta</button>
     </form>
 
-    <p class="text-sm text-center text-gray-500">
+    <p class="text-sm text-center text-muted">
         ¿Ya tienes cuenta? <a href="{{ route('portal.login') }}" class="underline">Ingresa aquí</a>
     </p>
 </div>

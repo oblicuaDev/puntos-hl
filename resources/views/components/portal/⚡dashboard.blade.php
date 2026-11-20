@@ -32,7 +32,7 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <div class="bg-gray-900 text-white rounded-xl p-6">
+    <div class="bg-azul text-white rounded-brand p-6">
         <p class="text-sm opacity-80">Tu saldo de puntos</p>
         <p class="text-3xl font-semibold">{{ number_format($this->patient->pointsBalance()) }}</p>
     </div>
@@ -55,7 +55,7 @@ new class extends Component
                 <li class="py-2 flex justify-between">
                     <div>
                         <p>{{ $movement->description }}</p>
-                        <p class="text-gray-400 text-xs">{{ $movement->occurred_at->format('d/m/Y H:i') }}</p>
+                        <p class="text-muted/70 text-xs">{{ $movement->occurred_at->format('d/m/Y H:i') }}</p>
                     </div>
                     <span class="{{ $movement->points >= 0 ? 'text-emerald-600' : 'text-red-600' }} font-medium">
                         {{ $movement->points >= 0 ? '+' : '' }}{{ number_format($movement->points) }}
@@ -63,7 +63,7 @@ new class extends Component
                 </li>
             @endforeach
             @if ($this->movements->isEmpty())
-                <li class="py-2 text-gray-500">Sin movimientos todavía.</li>
+                <li class="py-2 text-muted">Sin movimientos todavía.</li>
             @endif
         </ul>
     </div>

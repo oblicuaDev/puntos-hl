@@ -80,13 +80,13 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Nombre</label>
-            <input type="text" wire:model="name" class="mt-1 w-full rounded border-gray-300">
+            <input type="text" wire:model="name" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
             @error('name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium">Categoría padre (opcional)</label>
-            <select wire:model="parent_id" class="mt-1 w-full rounded border-gray-300">
+            <select wire:model="parent_id" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 <option value="">Ninguna (categoría de nivel superior)</option>
                 @foreach ($this->parentOptions as $option)
                     <option value="{{ $option->id }}">{{ $option->name }}</option>
@@ -96,7 +96,7 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Orden</label>
-            <input type="number" wire:model="order" class="mt-1 w-full rounded border-gray-300">
+            <input type="number" wire:model="order" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
         <label class="flex items-center gap-2">
@@ -105,11 +105,11 @@ new class extends Component
         </label>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded bg-gray-900 text-white px-4 py-2 text-sm font-medium">
+            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
             </button>
             @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-gray-500">Cancelar</button>
+                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
@@ -130,13 +130,13 @@ new class extends Component
                     <td class="p-3">{{ $category->parent?->name ?? '—' }}</td>
                     <td class="p-3">{{ $category->is_active ? 'Sí' : 'No' }}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button wire:click="edit({{ $category->id }})" class="text-blue-600">Editar</button>
+                        <button wire:click="edit({{ $category->id }})" class="text-azul">Editar</button>
                         <button wire:click="delete({{ $category->id }})" wire:confirm="¿Eliminar esta categoría?" class="text-red-600">Eliminar</button>
                     </td>
                 </tr>
             @endforeach
             @if ($this->categories->isEmpty())
-                <tr><td colspan="4" class="p-3 text-gray-500">Sin categorías todavía.</td></tr>
+                <tr><td colspan="4" class="p-3 text-muted">Sin categorías todavía.</td></tr>
             @endif
         </tbody>
     </table>
