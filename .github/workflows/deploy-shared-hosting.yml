@@ -1,0 +1,86 @@
+name: deploy (hosting compartido, sin Docker)
+
+# Manual a propósito (workflow_dispatch): este escenario es un respaldo por si
+# la VPS no se consigue, no el camino principal. No se dispara solo en cada
+# push para no fallar builds contra un servidor que puede no estar listo.
+#
+# Secrets que hay que crear en GitHub (Settings > Secrets and variables >
+# Actions) antes de poder correrlo:
+#   SHARED_HOST_SSH_KEY   llave privada SSH (la de auditoría NO sirve para esto,
+#                         ver CONTEXTO_SERVIDOR_HL.md — crear una nueva, de solo
+#                         despliegue, y agregar su pública en cPanel > SSH Access)
+#   SHARED_HOST_USER      usuario SSH/cPanel
+#   SHARED_HOST_HOST      IP o dominio del servidor
+#   SHARED_HOST_PORT      puerto SSH (confirmar; cPanel a veces usa uno no estándar)
+#   SHARED_HOST_PATH      ruta absoluta del docroot de puntos.harkerlloreda.com
+#                         (ej. /home/<usuario>/puntos.harkerlloreda.com)
+#
+# Requiere además que el .env ya exista en el servidor (no lo toca este
+# workflow) — ver .env.shared-hosting.example.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2" # igualar a lo que realmente habilite el hosting
+          extensions: pdo_mysql, intl, bcmath, gd, zip
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias de PHP (sin dev)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Compilar assets con Vite
+        run: |
+          npm ci
+          npm run build
+
+      - name: Preparar llave SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SHARED_HOST_SSH_KEY }}
+
+      - name: Agregar host a known_hosts
+        run: ssh-keyscan -p "${{ secrets.SHARED_HOST_PORT }}" "${{ secrets.SHARED_HOST_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: rsync al servidor
+        run: |
+          rsync -avz --delete \
+            -e "ssh -p ${{ secrets.SHARED_HOST_PORT }}" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='docker' \
+            --exclude='docker-compose*.yml' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='.env*' \
+            --exclude='storage/app/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            --exclude='storage/logs/*' \
+            ./ "${{ secrets.SHARED_HOST_USER }}@${{ secrets.SHARED_HOST_HOST }}:${{ secrets.SHARED_HOST_PATH }}/"
+
+      - name: Migrar, cachear y enlazar storage
+        run: |
+          ssh -p "${{ secrets.SHARED_HOST_PORT }}" "${{ secrets.SHARED_HOST_USER }}@${{ secrets.SHARED_HOST_HOST }}" '
+            set -e
+            cd "${{ secrets.SHARED_HOST_PATH }}"
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan event:cache
+            php artisan storage:link || true
+          '
