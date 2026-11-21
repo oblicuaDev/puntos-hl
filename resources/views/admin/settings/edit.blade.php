@@ -1,4 +1,4 @@
 <x-admin.layout title="HL Puntos — Configuración">
-    <h1 class="text-2xl font-semibold mb-6">Configuración general</h1>
+    <x-page-header icon="o-cog-6-tooth" title="Configuración general" />
     <livewire:admin.settings-form />
 </x-admin.layout>

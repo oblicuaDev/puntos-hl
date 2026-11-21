@@ -130,8 +130,8 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-2xl">
-        <h2 class="font-semibold">{{ $editingId ? 'Editar premio' : 'Nuevo premio' }}</h2>
+    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4">
+        <x-card-header :icon="$editingId ? 'o-pencil-square' : 'o-gift'">{{ $editingId ? 'Editar premio' : 'Nuevo premio' }}</x-card-header>
 
         <div>
             <label class="block text-sm font-medium">Título</label>
@@ -202,41 +202,83 @@ new class extends Component
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
+            <x-submit-button target="save" loading-text="Guardando…" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
-            </button>
+            </x-submit-button>
             @if ($editingId)
                 <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
             @endif
         </div>
     </form>
 
-    <table class="w-full bg-white rounded-xl shadow overflow-hidden text-sm">
-        <thead class="bg-gray-50 text-left">
-            <tr>
-                <th class="p-3">Título</th>
-                <th class="p-3">Categoría</th>
-                <th class="p-3">Precio</th>
-                <th class="p-3">Activo</th>
-                <th class="p-3"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($this->rewards as $reward)
-                <tr wire:key="reward-{{ $reward->id }}" class="border-t">
-                    <td class="p-3">{{ $reward->title }}</td>
-                    <td class="p-3">{{ $reward->category?->name ?? '—' }}</td>
-                    <td class="p-3">${{ number_format($reward->price_cop, 0, ',', '.') }}</td>
-                    <td class="p-3">{{ $reward->is_active ? 'Sí' : 'No' }}</td>
-                    <td class="p-3 text-right space-x-2">
-                        <button wire:click="edit({{ $reward->id }})" class="text-azul">Editar</button>
-                        <button wire:click="delete({{ $reward->id }})" wire:confirm="¿Eliminar este premio?" class="text-red-600">Eliminar</button>
-                    </td>
-                </tr>
-            @endforeach
-            @if ($this->rewards->isEmpty())
-                <tr><td colspan="5" class="p-3 text-muted">Sin premios todavía.</td></tr>
-            @endif
-        </tbody>
-    </table>
+    <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="text-left text-[11px] uppercase tracking-wider text-muted bg-[#F7F8FA]">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold">Premio</th>
+                        <th class="px-5 py-3 font-semibold">Categoría</th>
+                        <th class="px-5 py-3 font-semibold">Precio</th>
+                        <th class="px-5 py-3 font-semibold">Stock</th>
+                        <th class="px-5 py-3 font-semibold">Estado</th>
+                        <th class="px-5 py-3 font-semibold text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-black/5">
+                    @foreach ($this->rewards as $reward)
+                        <tr wire:key="reward-{{ $reward->id }}" class="hover:bg-[#FAFBFC] transition-colors">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-11 w-11 rounded-xl bg-[#EEF3F7] overflow-hidden shrink-0 flex items-center justify-center text-steel">
+                                        @if ($reward->images->first())
+                                            <img src="{{ Storage::url($reward->images->first()->path) }}" alt="" class="h-full w-full object-cover">
+                                        @else
+                                            @svg('heroicon-o-photo', 'h-4 w-4')
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-medium text-ink truncate">{{ $reward->title }}</p>
+                                        @if ($reward->is_featured)
+                                            <span class="inline-flex items-center gap-1 mt-0.5 rounded-full bg-dermo/50 text-marino px-2 py-0.5 text-[11px] font-medium">
+                                                @svg('heroicon-s-star', 'h-2.5 w-2.5')
+                                                Destacado
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-ink/80">{{ $reward->category?->name ?? '—' }}</td>
+                            <td class="px-5 py-3 tabular-nums text-ink/80">${{ number_format($reward->price_cop, 0, ',', '.') }}</td>
+                            <td class="px-5 py-3 tabular-nums">
+                                @if (is_null($reward->stock))
+                                    <span class="text-ink/80">Ilimitado</span>
+                                @elseif ($reward->stock <= 5)
+                                    <span class="font-semibold text-amber-700">{{ $reward->stock }}</span>
+                                    <span class="ml-1 inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2 py-0.5 text-[11px] font-semibold">Bajo</span>
+                                @else
+                                    <span class="text-ink/80">{{ $reward->stock }}</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3">
+                                @if ($reward->is_active)
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1 text-xs font-medium"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Activo</span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-black/5 text-muted px-2.5 py-1 text-xs font-medium"><span class="h-1.5 w-1.5 rounded-full bg-steel"></span>Inactivo</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3">
+                                <div class="flex items-center justify-end gap-1">
+                                    <button wire:click="edit({{ $reward->id }})" class="rounded-lg px-3 py-1.5 text-sm font-medium text-azul hover:bg-azul/10 transition-colors">Editar</button>
+                                    <button wire:click="delete({{ $reward->id }})" wire:confirm="¿Eliminar este premio?" class="rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @if ($this->rewards->isEmpty())
+                        <x-empty-state-row :colspan="6" icon="o-gift" message="Sin premios todavía." />
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

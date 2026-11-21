@@ -50,42 +50,45 @@ new class extends Component
 };
 ?>
 
-<form wire:submit="save" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-xl">
-    <h2 class="font-semibold">Configuración general</h2>
+<form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-xl">
+    <x-card-header icon="o-cog-6-tooth">Configuración general</x-card-header>
 
     @if ($saved)
-        <p class="text-sm text-emerald-600">Guardado correctamente.</p>
+        <p class="text-sm text-emerald-600 flex items-center gap-1.5">
+            @svg('heroicon-s-check-circle', 'h-4 w-4')
+            Guardado correctamente.
+        </p>
     @endif
 
     <div>
-        <label class="block text-sm font-medium">Tasa de cambio (COP por punto)</label>
-        <input type="number" step="0.01" wire:model="cop_per_point" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-banknotes', 'h-4 w-4 text-azul') Tasa de cambio (COP por punto)</label>
+        <input type="number" step="0.01" wire:model="cop_per_point" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('cop_per_point') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
-        <label class="block text-sm font-medium">% mínimo en puntos para pago mixto</label>
-        <input type="number" step="0.1" wire:model="min_points_percentage" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-receipt-percent', 'h-4 w-4 text-azul') % mínimo en puntos para pago mixto</label>
+        <input type="number" step="0.1" wire:model="min_points_percentage" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('min_points_percentage') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
-        <label class="block text-sm font-medium">Vigencia de los puntos (meses)</label>
-        <input type="number" wire:model="points_expiration_months" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-clock', 'h-4 w-4 text-azul') Vigencia de los puntos (meses)</label>
+        <input type="number" wire:model="points_expiration_months" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('points_expiration_months') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
-        <label class="block text-sm font-medium">Timeout de checkout abandonado (minutos)</label>
-        <input type="number" wire:model="abandoned_checkout_timeout_minutes" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-arrow-path', 'h-4 w-4 text-azul') Timeout de checkout abandonado (minutos)</label>
+        <input type="number" wire:model="abandoned_checkout_timeout_minutes" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('abandoned_checkout_timeout_minutes') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
-        <label class="block text-sm font-medium">Correo de gerencia (notificación de canjes)</label>
-        <input type="email" wire:model="management_notification_email" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-envelope', 'h-4 w-4 text-azul') Correo de gerencia (notificación de canjes)</label>
+        <input type="email" wire:model="management_notification_email" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('management_notification_email') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
+    <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">Guardar</x-submit-button>
 </form>

@@ -62,7 +62,12 @@ new class extends Component
 ?>
 
 <div class="bg-white rounded-xl shadow p-6 space-y-4 mt-6">
-    <h1 class="text-xl font-semibold">Crear cuenta</h1>
+    <div class="text-center space-y-2">
+        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-azul/10 text-azul">
+            @svg('heroicon-o-user-plus', 'h-5 w-5')
+        </span>
+        <h1 class="text-xl font-semibold">Crear cuenta</h1>
+    </div>
 
     <form wire:submit="register" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
@@ -116,10 +121,10 @@ new class extends Component
             <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
-        <button type="submit" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Crear cuenta</button>
+        <x-submit-button target="register" loading-text="Creando cuenta…" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Crear cuenta</x-submit-button>
     </form>
 
     <p class="text-sm text-center text-muted">
-        ¿Ya tienes cuenta? <a href="{{ route('portal.login') }}" class="underline">Ingresa aquí</a>
+        ¿Ya tienes cuenta? <a href="{{ route('portal.login') }}" wire:navigate class="underline">Ingresa aquí</a>
     </p>
 </div>

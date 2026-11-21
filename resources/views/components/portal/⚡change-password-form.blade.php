@@ -39,8 +39,13 @@ new class extends Component
 ?>
 
 <div class="bg-white rounded-xl shadow p-6 space-y-4 mt-6">
-    <h1 class="text-xl font-semibold">Cambiar contraseña</h1>
-    <p class="text-sm text-muted">Por seguridad, debes definir una nueva contraseña antes de continuar.</p>
+    <div class="text-center space-y-2">
+        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-azul/10 text-azul">
+            @svg('heroicon-o-key', 'h-5 w-5')
+        </span>
+        <h1 class="text-xl font-semibold">Cambiar contraseña</h1>
+    </div>
+    <p class="text-sm text-muted text-center">Por seguridad, debes definir una nueva contraseña antes de continuar.</p>
 
     <form wire:submit="updatePassword" class="space-y-4">
         <div>
@@ -60,6 +65,6 @@ new class extends Component
             <input type="password" wire:model="password_confirmation" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
         </div>
 
-        <button type="submit" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
+        <x-submit-button target="updatePassword" loading-text="Guardando…" class="w-full rounded-brand bg-azul text-white py-2.5 font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</x-submit-button>
     </form>
 </div>

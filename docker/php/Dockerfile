@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql pdo_sqlite zip gd bcmath intl opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+COPY opcache-dev.ini /usr/local/etc/php/conf.d/zz-opcache-dev.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \

@@ -9,6 +9,12 @@
 #
 set -euo pipefail
 
+# En Git Bash (Windows), docker run reinterpreta las rutas tipo /var/www/html
+# como rutas de Windows (MSYS path conversion) y corrompe los bind mounts del
+# contenedor — con eso roto, wp-cli no ve ningún plugin/tema aunque sí estén
+# en el volumen. No tiene efecto en Linux/macOS.
+export MSYS_NO_PATHCONV=1
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 exec docker run --rm --network hl-fidelizacion_hl \

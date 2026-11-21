@@ -1,4 +1,4 @@
 <x-admin.layout title="HL Puntos — Banners">
-    <h1 class="text-2xl font-semibold mb-6">Banners promocionales</h1>
+    <x-page-header icon="o-photo" title="Banners promocionales" />
     <livewire:admin.banner-manager />
 </x-admin.layout>

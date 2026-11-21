@@ -38,16 +38,19 @@ new class extends Component
 };
 ?>
 
-<form wire:submit="save" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-3xl">
-    <h2 class="font-semibold">Términos y condiciones</h2>
+<form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-3xl">
+    <x-card-header icon="o-scale">Términos y condiciones</x-card-header>
 
     @if ($saved)
-        <p class="text-sm text-emerald-600">Guardado correctamente.</p>
+        <p class="text-sm text-emerald-600 flex items-center gap-1.5">
+            @svg('heroicon-s-check-circle', 'h-4 w-4')
+            Guardado correctamente.
+        </p>
     @endif
 
     <div>
         <label class="block text-sm font-medium">Título</label>
-        <input type="text" wire:model="title" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+        <input type="text" wire:model="title" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         @error('title') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
@@ -58,5 +61,5 @@ new class extends Component
         @error('body_html') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Guardar</button>
+    <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">Guardar</x-submit-button>
 </form>

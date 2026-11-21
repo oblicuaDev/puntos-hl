@@ -119,23 +119,26 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-xl">
-        <h2 class="font-semibold">Registrar venta</h2>
+    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-xl">
+        <x-card-header icon="o-banknotes">Registrar venta</x-card-header>
 
         @if ($successMessage)
-            <p class="text-sm text-emerald-600">{{ $successMessage }}</p>
+            <p class="text-sm text-emerald-600 flex items-center gap-1.5">
+                @svg('heroicon-s-check-circle', 'h-4 w-4')
+                {{ $successMessage }}
+            </p>
         @endif
 
         <div>
             <label class="block text-sm font-medium">Paciente</label>
 
             @if ($selectedPatientLabel)
-                <div class="mt-1 flex items-center justify-between rounded border border-black/15 px-3 py-2 text-sm">
+                <div class="mt-1.5 flex items-center justify-between rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm">
                     <span>{{ $selectedPatientLabel }}</span>
-                    <button type="button" wire:click="clearPatient" class="text-red-600">Cambiar</button>
+                    <button type="button" wire:click="clearPatient" class="rounded-lg px-3 py-1.5 font-medium text-red-600 hover:bg-red-50 transition-colors">Cambiar</button>
                 </div>
             @else
-                <input type="text" wire:model.live.debounce.300ms="patientSearch" placeholder="Buscar por documento o nombre..." class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+                <input type="text" wire:model.live.debounce.300ms="patientSearch" placeholder="Buscar por documento o nombre..." class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
 
                 @if ($this->patientMatches->isNotEmpty())
                     <ul class="mt-1 border rounded divide-y text-sm">
@@ -154,7 +157,7 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Procedimiento (opcional)</label>
-            <select wire:model="procedure_id" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+            <select wire:model="procedure_id" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
                 <option value="">Sin procedimiento específico</option>
                 @foreach ($this->procedures as $procedure)
                     <option value="{{ $procedure->id }}">{{ $procedure->name }}</option>
@@ -164,47 +167,52 @@ new class extends Component
 
         <div>
             <label class="block text-sm font-medium">Valor de la venta (COP)</label>
-            <input type="number" wire:model="amount_cop" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+            <input type="number" wire:model="amount_cop" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
             @error('amount_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             <p class="text-xs text-muted mt-1">Tasa vigente: {{ number_format(setting('cop_per_point', 100), 0, ',', '.') }} COP por punto.</p>
         </div>
 
         <div>
             <label class="block text-sm font-medium">Fecha de la venta</label>
-            <input type="date" wire:model="sale_date" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
+            <input type="date" wire:model="sale_date" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
         </div>
 
         <div>
             <label class="block text-sm font-medium">Notas</label>
-            <textarea wire:model="notes" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none"></textarea>
+            <textarea wire:model="notes" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none"></textarea>
         </div>
 
-        <button type="submit" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">Registrar venta</button>
+        <x-submit-button target="save" loading-text="Registrando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">Registrar venta</x-submit-button>
     </form>
 
-    <table class="w-full bg-white rounded-xl shadow overflow-hidden text-sm">
-        <thead class="bg-gray-50 text-left">
+    <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden"><table class="w-full text-sm">
+        <thead class="text-left text-[11px] uppercase tracking-wider text-muted bg-[#F7F8FA]">
             <tr>
-                <th class="p-3">Fecha</th>
-                <th class="p-3">Paciente</th>
-                <th class="p-3">Procedimiento</th>
-                <th class="p-3">Valor</th>
-                <th class="p-3">Puntos</th>
+                <th class="px-5 py-3 font-semibold">Fecha</th>
+                <th class="px-5 py-3 font-semibold">Paciente</th>
+                <th class="px-5 py-3 font-semibold">Procedimiento</th>
+                <th class="px-5 py-3 font-semibold">Valor</th>
+                <th class="px-5 py-3 font-semibold">Puntos</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($this->recentSales as $sale)
-                <tr wire:key="sale-{{ $sale->id }}" class="border-t">
-                    <td class="p-3">{{ $sale->sale_date->format('d/m/Y') }}</td>
-                    <td class="p-3">{{ $sale->patient?->fullName() }}</td>
-                    <td class="p-3">{{ $sale->procedure?->name ?? '—' }}</td>
-                    <td class="p-3">${{ number_format($sale->amount_cop, 0, ',', '.') }}</td>
-                    <td class="p-3">{{ $sale->points_awarded }}</td>
+                <tr wire:key="sale-{{ $sale->id }}" class="border-t border-black/5 hover:bg-[#FAFBFC] transition-colors">
+                    <td class="px-5 py-3">{{ $sale->sale_date->format('d/m/Y') }}</td>
+                    <td class="px-5 py-3">{{ $sale->patient?->fullName() }}</td>
+                    <td class="px-5 py-3">{{ $sale->procedure?->name ?? '—' }}</td>
+                    <td class="px-5 py-3">${{ number_format($sale->amount_cop, 0, ',', '.') }}</td>
+                    <td class="px-5 py-3">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-dermo/40 text-marino px-2 py-0.5 text-xs font-medium">
+                            @svg('heroicon-s-sparkles', 'h-3 w-3')
+                            +{{ number_format($sale->points_awarded) }}
+                        </span>
+                    </td>
                 </tr>
             @endforeach
             @if ($this->recentSales->isEmpty())
-                <tr><td colspan="5" class="p-3 text-muted">Sin ventas todavía.</td></tr>
+                <x-empty-state-row :colspan="5" icon="o-banknotes" message="Sin ventas todavía." />
             @endif
         </tbody>
-    </table>
+    </table></div>
 </div>
