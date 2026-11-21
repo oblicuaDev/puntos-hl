@@ -56,7 +56,23 @@ new class extends Component
         }
 
         if ($outcome->requiresPayment()) {
-            $this->redirect($outcome->paymentInitiation->url);
+            $initiation = $outcome->paymentInitiation;
+            $payment = $outcome->redemption->payment;
+
+            if ($initiation->formToken) {
+                // Krypton real: el formToken es de un solo uso y de corta
+                // vigencia, viaja por flash session hasta la página que lo
+                // renderiza en vez de volver a llamar a Charge/CreatePayment.
+                session()->flash("payzen_checkout.{$payment->id}", [
+                    'formToken' => $initiation->formToken,
+                    'kr_public_key' => $initiation->extra['kr_public_key'] ?? null,
+                ]);
+                $this->redirectRoute('portal.checkout.payzen.show', $payment);
+
+                return;
+            }
+
+            $this->redirect($initiation->url);
 
             return;
         }

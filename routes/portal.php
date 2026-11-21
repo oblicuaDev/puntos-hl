@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Portal\PayzenCheckoutController;
 use App\Http\Controllers\Portal\StubPaymentController;
 use App\Models\Banner;
 use App\Models\LegalPage;
@@ -59,4 +60,18 @@ Route::middleware(['auth:patient', 'patient.password_changed'])->group(function 
     // Pantalla de pago simulada (solo mientras PAYMENTS_DRIVER=stub).
     Route::get('/checkout/stub/{payment}', [StubPaymentController::class, 'show'])->name('portal.checkout.stub.show');
     Route::post('/checkout/stub/{payment}', [StubPaymentController::class, 'decide'])->name('portal.checkout.stub.decide');
+
+    // Checkout embebido real con Payzen (PAYMENTS_DRIVER=payzen).
+    Route::get('/checkout/payzen/{payment}', [PayzenCheckoutController::class, 'show'])->name('portal.checkout.payzen.show');
+    // Krypton hace un POST de navegador real a kr-post-url-success (no fetch/XHR),
+    // sin token CSRF de Laravel — ver la excepción en bootstrap/app.php. GET
+    // también, porque la propia pantalla "procesando" recarga por GET.
+    Route::match(['get', 'post'], '/checkout/payzen/{payment}/retorno', [PayzenCheckoutController::class, 'return'])->name('portal.checkout.payzen.return');
 });
+
+// Notificación servidor-a-servidor de Payzen: pública (la llama Payzen, no un
+// paciente logueado) y sin CSRF (ver bootstrap/app.php). Autenticada por
+// firma HMAC dentro de PayzenGateway::handleCallback(), no por sesión.
+Route::post('/checkout/payzen/notificacion', [PayzenCheckoutController::class, 'ipn'])
+    ->name('portal.checkout.payzen.ipn')
+    ->middleware('throttle:60,1');

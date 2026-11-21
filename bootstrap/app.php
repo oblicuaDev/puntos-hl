@@ -41,10 +41,15 @@ return Application::configure(basePath: dirname(__DIR__))
             | Request::HEADER_X_FORWARDED_PORT
             | Request::HEADER_X_FORWARDED_PROTO);
 
-        // /admin/sso/revoke lo llama el plugin de WP servidor-a-servidor,
-        // autenticado con firma HMAC propia (no con la sesión del navegador).
+        // /admin/sso/revoke y la notificación de Payzen las llaman servicios
+        // externos servidor-a-servidor, autenticados con su propia firma
+        // HMAC (no con la sesión del navegador).
         $middleware->validateCsrfTokens(except: [
             'admin/sso/revoke',
+            'checkout/payzen/notificacion',
+            // Krypton hace un POST de navegador real a kr-post-url-success,
+            // sin token CSRF de Laravel.
+            'checkout/payzen/*/retorno',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
