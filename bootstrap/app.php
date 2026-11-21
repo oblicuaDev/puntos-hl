@@ -31,6 +31,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [SecurityHeaders::class]);
 
+        // En producción corre detrás de Apache (WHM) -> Nginx, ambos en
+        // infraestructura propia conectados por loopback: confiamos en todo
+        // el chain para que X-Forwarded-Proto/Host se respeten (URLs https
+        // correctas y cookies "secure" funcionando). Inofensivo en dev: ahí
+        // no hay proxy real por delante.
+        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO);
+
         // /admin/sso/revoke lo llama el plugin de WP servidor-a-servidor,
         // autenticado con firma HMAC propia (no con la sesión del navegador).
         $middleware->validateCsrfTokens(except: [

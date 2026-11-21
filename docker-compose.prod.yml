@@ -1,0 +1,87 @@
+name: hl-fidelizacion-prod
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile.prod
+    env_file: .env
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
+    networks: [hl]
+
+  queue:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile.prod
+    env_file: .env
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    command: php artisan queue:work --tries=3 --sleep=1 --max-time=3600
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
+    networks: [hl]
+
+  scheduler:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile.prod
+    env_file: .env
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
+    networks: [hl]
+
+  nginx:
+    image: nginx:1.27-alpine
+    # Solo loopback: el Apache de WHM recibe el tráfico público en 80/443 y lo
+    # reenvía aquí por reverse proxy. Ver docker/apache-reverse-proxy.conf.example.
+    ports:
+      - "127.0.0.1:8090:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks: [hl]
+
+  mysql:
+    image: mysql:8.4
+    env_file: .env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks: [hl]
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks: [hl]
+
+networks:
+  hl:
+
+volumes:
+  mysql_data:
+  redis_data:

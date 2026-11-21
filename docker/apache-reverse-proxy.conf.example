@@ -1,0 +1,24 @@
+# Snippet de Apache para que WHM reenvíe puntos.harkerlloreda.com al Nginx
+# dockerizado (127.0.0.1:8090), sin tocar los demás sitios que ya administra
+# cPanel en ese mismo servidor.
+#
+# Dónde va: en WHM, la forma soportada de inyectar config custom por dominio
+# es un "pre-VirtualHost include" o "post-VirtualHost include" en
+#   /etc/apache2/conf.d/userdata/std/2_4/<usuario_cpanel>/<dominio>/
+# (crear el/los archivo(s) ahí, ej. `proxy.conf`), y luego:
+#   whmapi1 restartservice httpd
+# (o "Rebuild Apache Configuration" seguido de "Restart HTTP Server" desde la
+# UI de WHM). Nunca editar httpd.conf a mano: WHM lo regenera y se pierde.
+#
+# Antes de esto hay que crear el subdominio/dominio "puntos.harkerlloreda.com"
+# desde cPanel (Domains) apuntando a cualquier docroot vacío — el proxy abajo
+# anula ese docroot para todo el tráfico.
+
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:8090/
+ProxyPassReverse / http://127.0.0.1:8090/
+
+# Cabeceras para que Laravel sepa que la conexión original llegó por HTTPS
+# (el TLS real lo termina Apache/AutoSSL, no el contenedor).
+RequestHeader set X-Forwarded-Proto "https"
+RequestHeader set X-Forwarded-Port "443"
