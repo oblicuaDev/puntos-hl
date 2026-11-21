@@ -1,6 +1,14 @@
-# Snippet de Apache para que WHM reenvíe puntos.harkerlloreda.com al Nginx
-# dockerizado (127.0.0.1:8090), sin tocar los demás sitios que ya administra
-# cPanel en ese mismo servidor.
+# ALTERNATIVA, no el camino por defecto: solo aplica si el VPS nuevo llega
+# con WHM/cPanel ya instalado (con acceso root) y hay que convivir con su
+# Apache en vez de dejar que Nginx escuche directo 80/443 (ver prod.conf y
+# docker-compose.prod.yml, que asumen un VPS limpio). Confirmado en
+# CONTEXTO_SERVIDOR_HL.md que el hosting compartido actual de GoDaddy NO sirve
+# para esto (sin root, sin Docker) — esto es para un eventual VPS *nuevo* que
+# igual trajera WHM preinstalado, no para ese hosting compartido.
+#
+# Si aplica: snippet de Apache para que WHM reenvíe puntos.harkerlloreda.com
+# al Nginx dockerizado (127.0.0.1:8090), sin tocar los demás sitios que ya
+# administra cPanel en ese mismo servidor.
 #
 # Dónde va: en WHM, la forma soportada de inyectar config custom por dominio
 # es un "pre-VirtualHost include" o "post-VirtualHost include" en

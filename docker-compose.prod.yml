@@ -47,13 +47,18 @@ services:
 
   nginx:
     image: nginx:1.27-alpine
-    # Solo loopback: el Apache de WHM recibe el tráfico público en 80/443 y lo
-    # reenvía aquí por reverse proxy. Ver docker/apache-reverse-proxy.conf.example.
+    # Asume un VPS propio sin otro servidor web por delante: Nginx escucha
+    # directo en 80/443. Si el VPS llega con WHM/cPanel ya instalado y hay que
+    # convivir con su Apache, usar en su lugar el puerto de loopback +
+    # docker/apache-reverse-proxy.conf.example (ver docs/08-despliegue).
     ports:
-      - "127.0.0.1:8090:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - .:/var/www/html
       - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/certbot/www:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - app
     restart: unless-stopped

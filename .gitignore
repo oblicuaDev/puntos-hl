@@ -7,6 +7,8 @@
 .env
 .env.backup
 .env.production
+# Notas de topología/acceso del servidor real (IP, usuarios, rutas internas).
+/CONTEXTO_SERVIDOR_HL.md
 .phpactor.json
 .phpunit.result.cache
 /.codex
