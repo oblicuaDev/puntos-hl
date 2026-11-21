@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#335C82">
+    <meta name="robots" content="noindex, nofollow">
     <title>{{ $title ?? 'Plan de Fidelización — Superadmin' }}</title>
     @vite(['resources/css/app.css'])
     {{ Vite::fonts() }}

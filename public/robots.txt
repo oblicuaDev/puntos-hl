@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /checkout
+Disallow: /mi-cuenta
+Disallow: /cambiar-password
+
+Sitemap: https://puntos.harkerlloreda.com/sitemap.xml

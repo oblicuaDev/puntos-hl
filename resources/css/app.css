@@ -25,7 +25,7 @@
 
     /* Neutros */
     --color-ink: #1e1e1e; /* texto principal */
-    --color-muted: #76777a; /* texto secundario */
+    --color-muted: #6b6c6f; /* texto secundario — ajustado desde #76777a para pasar contraste WCAG AA (4.5:1) sobre blanco */
     --color-steel: #a3a8ad;
     --color-mist: #9da9b5;
 

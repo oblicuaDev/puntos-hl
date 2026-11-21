@@ -8,7 +8,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="canonical" href="{{ url()->current() }}">
     <title>{{ $title ?? 'Plan de Fidelización Harker Lloreda' }}</title>
+    <meta name="description" content="{{ $description ?? 'Acumula puntos en cada procedimiento con Harker Lloreda y cámbialos por tratamientos, bonos y productos.' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Plan de Fidelización Harker Lloreda">
+    <meta property="og:title" content="{{ $title ?? 'Plan de Fidelización Harker Lloreda' }}">
+    <meta property="og:description" content="{{ $description ?? 'Acumula puntos en cada procedimiento con Harker Lloreda y cámbialos por tratamientos, bonos y productos.' }}">
+    <meta property="og:url" content="{{ url()->current() }}">
     @vite(['resources/css/app.css'])
     {{ Vite::fonts() }}
     @livewireStyles

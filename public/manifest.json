@@ -3,7 +3,8 @@
     "short_name": "HL Puntos",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#f9fafb",
-    "theme_color": "#111827",
+    "background_color": "#FAF8F5",
+    "theme_color": "#335C82",
+    "lang": "es",
     "icons": []
 }
