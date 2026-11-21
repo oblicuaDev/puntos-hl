@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('points'); // con signo: positivo gana, negativo gasta/vence
             $table->nullableMorphs('related'); // Sale, Redemption, PointBatch, etc.
             $table->string('description')->nullable();
-            $table->timestamp('occurred_at');
+            $table->dateTime('occurred_at'); // ver nota en create_point_batches_table.php
             $table->timestamps();
 
             $table->index(['patient_id', 'occurred_at']);

@@ -30,7 +30,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2" # igualar a lo que realmente habilite el hosting
+          php-version: "8.3" # ea-php83, instalado y asignado a puntos.harkerlloreda.com el 2026-11-21
           extensions: pdo_mysql, intl, bcmath, gd, zip
           coverage: none
 
