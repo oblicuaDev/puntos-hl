@@ -31,5 +31,21 @@
             "type": "image/png",
             "purpose": "maskable"
         }
+    ],
+    "screenshots": [
+        {
+            "src": "/img/screenshots/portal-mi-cuenta-desktop.png",
+            "sizes": "1903x941",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Saldo e historial de puntos en escritorio"
+        },
+        {
+            "src": "/img/screenshots/portal-mi-cuenta-mobile.png",
+            "sizes": "750x1672",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Saldo e historial de puntos en celular"
+        }
     ]
 }
