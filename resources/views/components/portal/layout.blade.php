@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png">
     <link rel="canonical" href="{{ url()->current() }}">
     <title>{{ $title ?? 'Plan de Fidelización Harker Lloreda' }}</title>
     <meta name="description" content="{{ $description ?? 'Acumula puntos en cada procedimiento con Harker Lloreda y cámbialos por tratamientos, bonos y productos.' }}">
