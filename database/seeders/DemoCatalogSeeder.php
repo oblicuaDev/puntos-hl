@@ -52,30 +52,46 @@ class DemoCatalogSeeder extends Seeder
         ];
     }
 
-    private function seedRewards(): void
+    /**
+     * Fuente única de verdad del catálogo de premios de demo: la usan tanto
+     * este seeder como el comando `catalog:resync-demo` que lo aplica sobre
+     * un ambiente (p. ej. producción) que ya tenía el catálogo viejo creado.
+     */
+    public static function rewardCatalog(): array
     {
-        $categories = [
+        return [
             'Descuentos y Bonos' => [
                 ['title' => 'Bono de regalo $50.000', 'short_description' => 'Bono para usar en cualquier procedimiento.', 'price_cop' => 50000],
                 ['title' => 'Bono de regalo $100.000', 'short_description' => 'Bono para usar en cualquier procedimiento.', 'price_cop' => 100000],
                 ['title' => 'Bono de regalo $200.000', 'short_description' => 'Bono para usar en cualquier procedimiento.', 'price_cop' => 200000],
             ],
-            'Spa & Bienestar' => [
-                ['title' => 'Masaje relajante 60 min', 'short_description' => 'Sesión de masaje de relajación.', 'price_cop' => 160000],
-                ['title' => 'Sesión de drenaje linfático', 'short_description' => 'Drenaje linfático manual.', 'price_cop' => 220000],
-                ['title' => 'Manicure y pedicure spa', 'short_description' => 'Ritual completo de manos y pies.', 'price_cop' => 90000],
-            ],
             'Procedimientos Faciales' => [
-                ['title' => 'Limpieza facial profunda', 'short_description' => 'Limpieza facial con extracción.', 'price_cop' => 180000],
-                ['title' => 'Hidratación con ácido hialurónico', 'short_description' => 'Hidratación facial profunda.', 'price_cop' => 350000],
-                ['title' => 'Peeling químico', 'short_description' => 'Renovación celular facial.', 'price_cop' => 280000],
-                ['title' => 'Radiofrecuencia facial', 'short_description' => 'Tensado de piel por radiofrecuencia.', 'price_cop' => 300000],
+                ['title' => 'Rejuvenecimiento facial con láser Spectra', 'short_description' => 'Tratamiento láser de picosegundos para rejuvenecer la piel del rostro.', 'price_cop' => 280000],
+                ['title' => 'Restauración de volumen facial', 'short_description' => 'Relleno con ácido hialurónico para recuperar volumen en el rostro.', 'price_cop' => 350000],
+                ['title' => 'Fotorejuvenecimiento con luz pulsada', 'short_description' => 'Tratamiento de luz pulsada intensa para mejorar la textura de la piel.', 'price_cop' => 220000],
+                ['title' => 'Lifting facial no quirúrgico', 'short_description' => 'Tensado de piel del rostro con ultrasonido focalizado (Ultraformer).', 'price_cop' => 450000],
             ],
-            'Dermocosmética' => [
-                ['title' => 'Kit de skincare premium', 'short_description' => 'Rutina facial completa de marca propia.', 'price_cop' => 150000],
-                ['title' => 'Depilación láser (zona pequeña)', 'short_description' => 'Sesión de depilación láser.', 'price_cop' => 190000],
+            'Procedimientos Corporales' => [
+                ['title' => 'Drenaje linfático', 'short_description' => 'Terapia manual de drenaje linfático post procedimiento.', 'price_cop' => 180000],
+                ['title' => 'Masaje post operatorio', 'short_description' => 'Sesión de presoterapia, radiofrecuencia y drenaje manual.', 'price_cop' => 160000],
+                ['title' => 'Remodelación corporal con radiofrecuencia', 'short_description' => 'Tratamiento con Venus Legacy para reducir flacidez y grasa localizada.', 'price_cop' => 320000],
+                ['title' => 'Musculptech', 'short_description' => 'Estimulación de contracciones musculares con tecnología de 7 teslas.', 'price_cop' => 300000],
+            ],
+            'Cuidado de la Piel' => [
+                ['title' => 'Peeling facial', 'short_description' => 'Renovación celular de la piel del rostro.', 'price_cop' => 200000],
+                ['title' => 'Hollywood Peel', 'short_description' => 'Mascarilla de carbón activado con láser Q-switch Nd:YAG.', 'price_cop' => 260000],
+                ['title' => 'Microdermoabrasión', 'short_description' => 'Exfoliación profunda de la piel con puntas de diamante.', 'price_cop' => 150000],
+                ['title' => 'Mesoterapia facial polirevitalizante', 'short_description' => 'Microinyecciones revitalizantes para la piel del rostro.', 'price_cop' => 230000],
+            ],
+            'Cuidado Capilar' => [
+                ['title' => 'Regeneración capilar con PRP', 'short_description' => 'Plasma rico en plaquetas para estimular el crecimiento del cabello.', 'price_cop' => 280000],
             ],
         ];
+    }
+
+    private function seedRewards(): void
+    {
+        $categories = self::rewardCatalog();
 
         $order = 0;
 
