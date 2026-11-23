@@ -16,13 +16,16 @@ class DemoCatalogSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Procedure::count() === 0) {
+        // Comprueba por nombre/slug propios del seed, no por conteo: así no
+        // se salta el catálogo de demo en un ambiente que ya tenga registros
+        // de prueba previos (p. ej. un "Pro 1" / "Premio 1" de smoke test).
+        if (Procedure::where('name', 'Rinoplastia')->doesntExist()) {
             foreach ($this->procedures() as $procedure) {
                 Procedure::create($procedure);
             }
         }
 
-        if (RewardCategory::count() === 0 && Reward::count() === 0) {
+        if (RewardCategory::where('slug', 'descuentos-y-bonos')->doesntExist()) {
             $this->seedRewards();
         }
     }
