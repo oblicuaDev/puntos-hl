@@ -16,10 +16,15 @@
                 </a>
             </section>
         @else
-            <section class="space-y-5 pt-2">
+            <section class="-mx-5 -mt-5 relative h-48 overflow-hidden">
+                <img src="{{ asset('img/marketing/hero-bienestar.webp') }}" alt="Pacientes de Harker Lloreda" class="w-full h-full object-cover object-right">
+                <div class="absolute inset-0 bg-gradient-to-t from-marino/70 via-marino/10 to-transparent"></div>
+            </section>
+
+            <section class="space-y-5">
                 <span class="inline-flex items-center rounded-full bg-dermo text-marino text-[11px] font-semibold uppercase tracking-wider px-3 py-1">Plan de fidelización</span>
-                <h1 class="text-3xl font-semibold text-marino leading-tight">Tus procedimientos ahora suman puntos</h1>
-                <p class="text-muted text-sm leading-relaxed">Acumula puntos con tus compras y procedimientos, y redímelos por premios.</p>
+                <h1 class="text-3xl font-semibold text-marino leading-tight">Gana puntos en cada procedimiento, en el lugar donde ya confías</h1>
+                <p class="text-muted text-sm leading-relaxed">Hace parte de la experiencia Harker Lloreda: 15 años y más de 8.000 pacientes acompañados. Ahora, cada procedimiento de piel, cuerpo, cara y cabello también suma puntos para tus próximos tratamientos.</p>
             </section>
 
             <section class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 divide-y divide-black/5 px-5">
@@ -34,7 +39,7 @@
                     <span class="h-8 w-8 rounded-full bg-azul text-white text-sm font-semibold flex items-center justify-center shrink-0">2</span>
                     <div>
                         <p class="text-sm font-semibold text-marino">Gana puntos</p>
-                        <p class="text-xs text-muted mt-0.5">Cada procedimiento y compra se registra automáticamente.</p>
+                        <p class="text-xs text-muted mt-0.5">Cada procedimiento y compra en Harker Lloreda se registra automáticamente.</p>
                     </div>
                 </div>
                 <div class="flex gap-4 py-4">

@@ -35,6 +35,12 @@ return [
         ],
     ],
 
+    // Sitio principal de la clínica (harkerlloreda.com), ajeno a este
+    // proyecto. Se usa para enlazar "volver al sitio" desde el portal.
+    'harker' => [
+        'site_url' => env('HARKER_SITE_URL', 'https://harkerlloreda.com'),
+    ],
+
     // Payzen/Izipay (Lyra). Ver app/Services/Payments/PayzenGateway.php y
     // PAYMENTS_DRIVER en .env.
     'payzen' => [

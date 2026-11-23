@@ -42,6 +42,15 @@
         {{ $slot }}
     </main>
 
+    <footer class="px-5 pb-4 max-w-2xl mx-auto text-center">
+        <p class="text-[11px] text-muted">
+            Plan de fidelización de
+            <a href="{{ config('services.harker.site_url') }}" class="underline underline-offset-2">Harker Lloreda</a>
+            · Desarrollado por
+            <a href="https://oblicua.co" target="_blank" rel="noopener" class="underline underline-offset-2">Oblicua</a>
+        </p>
+    </footer>
+
     @auth('patient')
         <nav class="fixed bottom-3 inset-x-3 mx-auto max-w-md bg-white rounded-2xl shadow-[0_8px_24px_rgba(43,60,76,0.14)] grid grid-cols-3 gap-1 p-1.5 text-xs z-10">
             @php

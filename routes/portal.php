@@ -34,7 +34,9 @@ Route::post('/logout', function () {
     request()->session()->invalidate();
     request()->session()->regenerateToken();
 
-    return redirect()->route('portal.home');
+    // Al salir del portal de puntos, el paciente vuelve al sitio principal
+    // de la clínica (harkerlloreda.com), no se queda dando vueltas aquí.
+    return redirect()->away(config('services.harker.site_url'));
 })->middleware('auth:patient')->name('portal.logout');
 
 // Autenticado, pero accesible aunque deba cambiar la contraseña.
