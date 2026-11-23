@@ -8,6 +8,8 @@ use Livewire\Component;
 
 new class extends Component
 {
+    public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Validate('required|string|max:255')]
@@ -33,6 +35,12 @@ new class extends Component
         return $this->categories->reject(fn ($c) => $c->id === $this->editingId);
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->showModal = true;
+    }
+
     public function edit(int $id): void
     {
         $category = RewardCategory::findOrFail($id);
@@ -42,6 +50,7 @@ new class extends Component
         $this->parent_id = $category->parent_id;
         $this->order = $category->order;
         $this->is_active = $category->is_active;
+        $this->showModal = true;
     }
 
     public function save(): void
@@ -56,7 +65,7 @@ new class extends Component
 
         RewardCategory::updateOrCreate(['id' => $this->editingId], $data);
 
-        $this->cancel();
+        $this->closeModal();
         unset($this->categories);
     }
 
@@ -66,8 +75,15 @@ new class extends Component
         unset($this->categories);
     }
 
-    public function cancel(): void
+    public function closeModal(): void
     {
+        $this->resetForm();
+        $this->showModal = false;
+    }
+
+    private function resetForm(): void
+    {
+        $this->resetValidation();
         $this->reset(['editingId', 'name', 'parent_id', 'order', 'is_active']);
         $this->is_active = true;
     }
@@ -75,44 +91,51 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-xl">
-        <x-card-header :icon="$editingId ? 'o-pencil-square' : 'o-tag'">{{ $editingId ? 'Editar categoría' : 'Nueva categoría' }}</x-card-header>
+    <div class="flex items-center justify-end">
+        <button type="button" wire:click="openCreate" class="inline-flex items-center gap-1.5 rounded-xl bg-azul text-white px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
+            @svg('heroicon-o-plus', 'h-4 w-4')
+            Crear categoría
+        </button>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium">Nombre</label>
-            <input type="text" wire:model="name" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-            @error('name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+    @if ($showModal)
+        <x-admin.modal :title="$editingId ? 'Editar categoría' : 'Nueva categoría'" onClose="closeModal">
+            <form wire:submit="save" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium">Nombre</label>
+                    <input type="text" wire:model="name" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                    @error('name') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
-        <div>
-            <label class="block text-sm font-medium">Categoría padre (opcional)</label>
-            <select wire:model="parent_id" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-                <option value="">Ninguna (categoría de nivel superior)</option>
-                @foreach ($this->parentOptions as $option)
-                    <option value="{{ $option->id }}">{{ $option->name }}</option>
-                @endforeach
-            </select>
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Categoría padre (opcional)</label>
+                    <select wire:model="parent_id" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                        <option value="">Ninguna (categoría de nivel superior)</option>
+                        @foreach ($this->parentOptions as $option)
+                            <option value="{{ $option->id }}">{{ $option->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-        <div>
-            <label class="block text-sm font-medium">Orden</label>
-            <input type="number" wire:model="order" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Orden</label>
+                    <input type="number" wire:model="order" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                </div>
 
-        <label class="flex items-center gap-2">
-            <input type="checkbox" wire:model="is_active">
-            <span class="text-sm">Activa</span>
-        </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" wire:model="is_active">
+                    <span class="text-sm">Activa</span>
+                </label>
 
-        <div class="flex gap-2">
-            <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
-                {{ $editingId ? 'Guardar cambios' : 'Crear' }}
-            </x-submit-button>
-            @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
-            @endif
-        </div>
-    </form>
+                <div class="flex gap-2">
+                    <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
+                        {{ $editingId ? 'Guardar cambios' : 'Crear' }}
+                    </x-submit-button>
+                    <button type="button" wire:click="closeModal" class="rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
+                </div>
+            </form>
+        </x-admin.modal>
+    @endif
 
     <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden"><table class="w-full text-sm">
         <thead class="text-left text-[11px] uppercase tracking-wider text-muted bg-[#F7F8FA]">

@@ -14,6 +14,8 @@ new class extends Component
 {
     use WithFileUploads;
 
+    public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Validate('required|string|max:255')]
@@ -59,6 +61,12 @@ new class extends Component
         return ['newImages.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096'];
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->showModal = true;
+    }
+
     public function edit(int $id): void
     {
         $reward = Reward::findOrFail($id);
@@ -73,6 +81,7 @@ new class extends Component
         $this->is_active = $reward->is_active;
         $this->is_featured = $reward->is_featured;
         $this->newImages = [];
+        $this->showModal = true;
     }
 
     public function save(): void
@@ -103,7 +112,7 @@ new class extends Component
             }
         }
 
-        $this->cancel();
+        $this->closeModal();
         unset($this->rewards);
     }
 
@@ -121,8 +130,15 @@ new class extends Component
         unset($this->rewards);
     }
 
-    public function cancel(): void
+    public function closeModal(): void
     {
+        $this->resetForm();
+        $this->showModal = false;
+    }
+
+    private function resetForm(): void
+    {
+        $this->resetValidation();
         $this->reset(['editingId', 'title', 'category_id', 'short_description', 'body_html', 'price_cop', 'stock', 'is_active', 'is_featured', 'newImages']);
         $this->is_active = true;
     }
@@ -130,9 +146,16 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4">
-        <x-card-header :icon="$editingId ? 'o-pencil-square' : 'o-gift'">{{ $editingId ? 'Editar premio' : 'Nuevo premio' }}</x-card-header>
+    <div class="flex items-center justify-end">
+        <button type="button" wire:click="openCreate" class="inline-flex items-center gap-1.5 rounded-xl bg-azul text-white px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
+            @svg('heroicon-o-plus', 'h-4 w-4')
+            Crear premio
+        </button>
+    </div>
 
+    @if ($showModal)
+    <x-admin.modal :title="$editingId ? 'Editar premio' : 'Nuevo premio'" onClose="closeModal" maxWidth="max-w-2xl">
+    <form wire:submit="save" class="space-y-4">
         <div>
             <label class="block text-sm font-medium">Título</label>
             <input type="text" wire:model="title" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
@@ -205,11 +228,11 @@ new class extends Component
             <x-submit-button target="save" loading-text="Guardando…" class="rounded-full bg-azul text-white px-5 py-2 text-sm font-medium border-2 border-transparent transition-all duration-500 hover:bg-white hover:text-azul hover:border-azul">
                 {{ $editingId ? 'Guardar cambios' : 'Crear' }}
             </x-submit-button>
-            @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
-            @endif
+            <button type="button" wire:click="closeModal" class="rounded px-4 py-2 text-sm text-muted">Cancelar</button>
         </div>
     </form>
+    </x-admin.modal>
+    @endif
 
     <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden">
         <div class="overflow-x-auto">

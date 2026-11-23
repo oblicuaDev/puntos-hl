@@ -12,6 +12,8 @@ new class extends Component
 
     public string $statusFilter = 'all';
 
+    public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public string $document_type = 'CC';
@@ -74,6 +76,12 @@ new class extends Component
         ];
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->showModal = true;
+    }
+
     public function edit(int $id): void
     {
         $patient = Patient::findOrFail($id);
@@ -88,6 +96,7 @@ new class extends Component
         $this->address = (string) $patient->address;
         $this->city = (string) $patient->city;
         $this->birthdate = $patient->birthdate?->format('Y-m-d');
+        $this->showModal = true;
     }
 
     public function save(): void
@@ -109,7 +118,7 @@ new class extends Component
             Patient::create($data);
         }
 
-        $this->cancel();
+        $this->closeModal();
         unset($this->patients, $this->statusCounts);
     }
 
@@ -120,8 +129,15 @@ new class extends Component
         unset($this->patients, $this->statusCounts);
     }
 
-    public function cancel(): void
+    public function closeModal(): void
     {
+        $this->resetForm();
+        $this->showModal = false;
+    }
+
+    private function resetForm(): void
+    {
+        $this->resetValidation();
         $this->reset(['editingId', 'document_number', 'first_name', 'last_name', 'email', 'phone', 'address', 'city', 'birthdate']);
         $this->document_type = 'CC';
     }
@@ -134,18 +150,18 @@ new class extends Component
             <h1 class="text-3xl font-semibold text-marino tracking-tight">Pacientes</h1>
             <p class="text-sm text-muted mt-1">Registra pacientes, edita sus datos y gestiona el acceso al portal.</p>
         </div>
+        <button type="button" wire:click="openCreate" class="inline-flex items-center gap-1.5 rounded-xl bg-azul text-white px-4 h-11 text-sm font-semibold transition-colors hover:bg-azul-dark shrink-0">
+            @svg('heroicon-o-user-plus', 'h-4 w-4')
+            Registrar paciente
+        </button>
     </div>
 
-    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-5">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-marino flex items-center gap-2">
-                @svg($editingId ? 'heroicon-o-pencil-square' : 'heroicon-o-user-plus', 'h-4 w-4 text-azul')
-                {{ $editingId ? 'Editar paciente' : 'Registrar paciente' }}
-            </h2>
-            @if (! $editingId)
-                <p class="hidden lg:block text-xs text-muted max-w-sm text-right">La contraseña inicial será su número de documento. Deberá cambiarla en su primer ingreso.</p>
-            @endif
-        </div>
+    @if ($showModal)
+    <x-admin.modal :title="$editingId ? 'Editar paciente' : 'Registrar paciente'" onClose="closeModal" maxWidth="max-w-3xl">
+    <form wire:submit="save" class="space-y-5">
+        @if (! $editingId)
+            <p class="text-xs text-muted">La contraseña inicial será su número de documento. Deberá cambiarla en su primer ingreso.</p>
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             <div>
@@ -199,11 +215,11 @@ new class extends Component
             <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 h-11 text-sm font-semibold transition-colors hover:bg-azul-dark">
                 {{ $editingId ? 'Guardar cambios' : 'Registrar paciente' }}
             </x-submit-button>
-            @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded-xl px-4 h-11 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
-            @endif
+            <button type="button" wire:click="closeModal" class="rounded-xl px-4 h-11 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
         </div>
     </form>
+    </x-admin.modal>
+    @endif
 
     <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden">
         <div class="p-4 border-b border-black/5 flex flex-col md:flex-row md:items-center gap-3">

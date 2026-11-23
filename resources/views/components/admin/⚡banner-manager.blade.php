@@ -11,6 +11,8 @@ new class extends Component
 {
     use WithFileUploads;
 
+    public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Validate('nullable|string|max:255')]
@@ -52,6 +54,12 @@ new class extends Component
         return Banner::orderBy('order')->get();
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->showModal = true;
+    }
+
     public function edit(int $id): void
     {
         $banner = Banner::findOrFail($id);
@@ -67,6 +75,7 @@ new class extends Component
         $this->existingImageMobilePath = $banner->image_path_mobile;
         $this->imageDesktop = null;
         $this->imageMobile = null;
+        $this->showModal = true;
     }
 
     public function save(): void
@@ -90,7 +99,7 @@ new class extends Component
 
         Banner::updateOrCreate(['id' => $this->editingId], $data);
 
-        $this->cancel();
+        $this->closeModal();
         unset($this->banners);
     }
 
@@ -100,8 +109,15 @@ new class extends Component
         unset($this->banners);
     }
 
-    public function cancel(): void
+    public function closeModal(): void
     {
+        $this->resetForm();
+        $this->showModal = false;
+    }
+
+    private function resetForm(): void
+    {
+        $this->resetValidation();
         $this->reset(['editingId', 'title', 'link_url', 'order', 'starts_at', 'ends_at', 'is_active', 'imageDesktop', 'imageMobile', 'existingImagePath', 'existingImageMobilePath']);
         $this->is_active = true;
     }
@@ -109,66 +125,73 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-xl">
-        <x-card-header :icon="$editingId ? 'o-pencil-square' : 'o-photo'">{{ $editingId ? 'Editar banner' : 'Nuevo banner' }}</x-card-header>
+    <div class="flex items-center justify-end">
+        <button type="button" wire:click="openCreate" class="inline-flex items-center gap-1.5 rounded-xl bg-azul text-white px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
+            @svg('heroicon-o-plus', 'h-4 w-4')
+            Crear banner
+        </button>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium">Título (opcional)</label>
-            <input type="text" wire:model="title" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-        </div>
+    @if ($showModal)
+        <x-admin.modal :title="$editingId ? 'Editar banner' : 'Nuevo banner'" onClose="closeModal">
+            <form wire:submit="save" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium">Título (opcional)</label>
+                    <input type="text" wire:model="title" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                </div>
 
-        <div>
-            <label class="block text-sm font-medium">Enlace (opcional)</label>
-            <input type="text" wire:model="link_url" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-            @error('link_url') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Enlace (opcional)</label>
+                    <input type="text" wire:model="link_url" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                    @error('link_url') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium">Vigente desde</label>
-                <input type="date" wire:model="starts_at" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Vigente hasta</label>
-                <input type="date" wire:model="ends_at" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-            </div>
-        </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Vigente desde</label>
+                        <input type="date" wire:model="starts_at" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Vigente hasta</label>
+                        <input type="date" wire:model="ends_at" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                    </div>
+                </div>
 
-        <div>
-            <label class="block text-sm font-medium">Orden</label>
-            <input type="number" wire:model="order" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Orden</label>
+                    <input type="number" wire:model="order" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+                </div>
 
-        <label class="flex items-center gap-2">
-            <input type="checkbox" wire:model="is_active">
-            <span class="text-sm">Activo</span>
-        </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" wire:model="is_active">
+                    <span class="text-sm">Activo</span>
+                </label>
 
-        @if ($existingImagePath)
-            <img src="{{ Storage::url($existingImagePath) }}" class="h-20 rounded">
-        @endif
+                @if ($existingImagePath)
+                    <img src="{{ Storage::url($existingImagePath) }}" class="h-20 rounded">
+                @endif
 
-        <div>
-            <label class="block text-sm font-medium">Imagen desktop</label>
-            <input type="file" wire:model="imageDesktop" accept="image/*" class="mt-1 w-full text-sm">
-            @error('imageDesktop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Imagen desktop</label>
+                    <input type="file" wire:model="imageDesktop" accept="image/*" class="mt-1 w-full text-sm">
+                    @error('imageDesktop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
-        <div>
-            <label class="block text-sm font-medium">Imagen mobile (opcional)</label>
-            <input type="file" wire:model="imageMobile" accept="image/*" class="mt-1 w-full text-sm">
-            @error('imageMobile') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+                <div>
+                    <label class="block text-sm font-medium">Imagen mobile (opcional)</label>
+                    <input type="file" wire:model="imageMobile" accept="image/*" class="mt-1 w-full text-sm">
+                    @error('imageMobile') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
-        <div class="flex gap-2">
-            <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
-                {{ $editingId ? 'Guardar cambios' : 'Crear' }}
-            </x-submit-button>
-            @if ($editingId)
-                <button type="button" wire:click="cancel" class="rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
-            @endif
-        </div>
-    </form>
+                <div class="flex gap-2">
+                    <x-submit-button target="save" loading-text="Guardando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">
+                        {{ $editingId ? 'Guardar cambios' : 'Crear' }}
+                    </x-submit-button>
+                    <button type="button" wire:click="closeModal" class="rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
+                </div>
+            </form>
+        </x-admin.modal>
+    @endif
 
     <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden"><table class="w-full text-sm">
         <thead class="text-left text-[11px] uppercase tracking-wider text-muted bg-[#F7F8FA]">

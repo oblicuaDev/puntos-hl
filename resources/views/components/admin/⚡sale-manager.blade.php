@@ -12,6 +12,8 @@ use Livewire\Component;
 
 new class extends Component
 {
+    public bool $showModal = false;
+
     public string $patientSearch = '';
 
     public ?int $patient_id = null;
@@ -35,6 +37,17 @@ new class extends Component
     public function mount(): void
     {
         $this->sale_date = now()->format('Y-m-d');
+    }
+
+    public function openCreate(): void
+    {
+        $this->successMessage = null;
+        $this->showModal = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->showModal = false;
     }
 
     #[Computed]
@@ -112,6 +125,7 @@ new class extends Component
         $this->reset(['procedure_id', 'amount_cop', 'notes']);
         $this->clearPatient();
         $this->sale_date = now()->format('Y-m-d');
+        $this->showModal = false;
 
         unset($this->recentSales);
     }
@@ -119,16 +133,24 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
-    <form wire:submit="save" class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 p-6 space-y-4 max-w-xl">
-        <x-card-header icon="o-banknotes">Registrar venta</x-card-header>
-
+    <div class="flex items-center justify-between gap-3">
         @if ($successMessage)
             <p class="text-sm text-emerald-600 flex items-center gap-1.5">
                 @svg('heroicon-s-check-circle', 'h-4 w-4')
                 {{ $successMessage }}
             </p>
+        @else
+            <span></span>
         @endif
+        <button type="button" wire:click="openCreate" class="inline-flex items-center gap-1.5 rounded-xl bg-azul text-white px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark shrink-0">
+            @svg('heroicon-o-plus', 'h-4 w-4')
+            Registrar venta
+        </button>
+    </div>
 
+    @if ($showModal)
+    <x-admin.modal title="Registrar venta" onClose="closeModal">
+    <form wire:submit="save" class="space-y-4">
         <div>
             <label class="block text-sm font-medium">Paciente</label>
 
@@ -182,8 +204,13 @@ new class extends Component
             <textarea wire:model="notes" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none"></textarea>
         </div>
 
-        <x-submit-button target="save" loading-text="Registrando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">Registrar venta</x-submit-button>
+        <div class="flex gap-2">
+            <x-submit-button target="save" loading-text="Registrando…" class="rounded-xl bg-azul text-white px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-azul-dark">Registrar venta</x-submit-button>
+            <button type="button" wire:click="closeModal" class="rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-black/5">Cancelar</button>
+        </div>
     </form>
+    </x-admin.modal>
+    @endif
 
     <div class="bg-white rounded-brand shadow-sm ring-1 ring-black/5 overflow-hidden"><table class="w-full text-sm">
         <thead class="text-left text-[11px] uppercase tracking-wider text-muted bg-[#F7F8FA]">
