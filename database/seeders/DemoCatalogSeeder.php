@@ -31,7 +31,7 @@ class DemoCatalogSeeder extends Seeder
             $this->seedRewards();
         }
 
-        if (Banner::where('image_path', 'banners/demo-hero-bienestar.webp')->doesntExist()) {
+        if (Banner::where('image_path', 'banners/demo-promo-bonos-1.webp')->doesntExist()) {
             $this->seedBanners();
         }
     }
@@ -120,18 +120,30 @@ class DemoCatalogSeeder extends Seeder
     }
 
     /**
-     * Copia las mismas fotografías de marca usadas en el home/registro hacia
-     * el disco público (los banners se sirven vía Storage::url, no asset())
-     * y crea los registros que alimentan el carrusel del home del portal.
+     * Fuente única de verdad de los banners de demo del home: la usan tanto
+     * este seeder como `catalog:resync-demo` para reemplazar banners viejos
+     * en un ambiente que ya los tenía creados (p. ej. producción).
+     *
+     * Son banners de diseño (no fotografías), pensados para comunicar algo
+     * concreto del plan de puntos (bonos de descuento reales del catálogo),
+     * no solo una foto de marca sin mensaje.
+     */
+    public static function bannerCatalog(): array
+    {
+        return [
+            ['source' => 'promo-bonos-1.webp', 'title' => 'Tus puntos valen dinero real', 'order' => 0],
+            ['source' => 'promo-bonos-2.webp', 'title' => 'Hasta $200.000 en bonos de descuento', 'order' => 1],
+        ];
+    }
+
+    /**
+     * Copia las imágenes de banner hacia el disco público (los banners se
+     * sirven vía Storage::url, no asset()) y crea los registros que
+     * alimentan el carrusel del home del portal.
      */
     private function seedBanners(): void
     {
-        $banners = [
-            ['source' => 'hero-bienestar.webp', 'title' => 'Tus procedimientos ahora suman puntos', 'order' => 0],
-            ['source' => 'hero-corporal.webp', 'title' => 'Conoce el catálogo de premios', 'order' => 1],
-        ];
-
-        foreach ($banners as $banner) {
+        foreach (self::bannerCatalog() as $banner) {
             $path = 'banners/demo-'.$banner['source'];
             $sourcePath = public_path('img/marketing/'.$banner['source']);
 

@@ -2,15 +2,18 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Banner;
 use App\Models\Reward;
 use App\Models\RewardCategory;
 use Database\Seeders\DemoCatalogSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Reemplaza el catálogo de premios de demo (categorías/premios genéricos de
- * spa) por el catálogo real de H&L definido en DemoCatalogSeeder::rewardCatalog().
+ * spa) por el catálogo real de H&L definido en DemoCatalogSeeder::rewardCatalog(),
+ * y los banners de demo viejos por los definidos en DemoCatalogSeeder::bannerCatalog().
  *
  * A diferencia de DemoCatalogSeeder (que solo corre una vez, en una base de
  * datos vacía), este comando está pensado para un ambiente donde el catálogo
@@ -61,15 +64,22 @@ class ResyncDemoCatalog extends Command
 
         $newCategoryNames = collect($targetNames)->diff(RewardCategory::pluck('name'));
 
+        $bannerCatalog = DemoCatalogSeeder::bannerCatalog();
+        $desiredBannerPaths = collect($bannerCatalog)->map(fn ($b) => 'banners/demo-'.$b['source']);
+        $staleBanners = Banner::where('image_path', 'like', 'banners/demo-%')
+            ->whereNotIn('image_path', $desiredBannerPaths)
+            ->get();
+
         $this->line('Categorías a borrar: '.($staleCategories->pluck('name')->implode(', ') ?: '(ninguna)'));
         $this->line('Categorías nuevas a crear: '.($newCategoryNames->implode(', ') ?: '(ninguna)'));
         $this->line('Premios a borrar: '.$rewardIdsToDelete->count());
+        $this->line('Banners de demo viejos a reemplazar: '.($staleBanners->pluck('title')->implode(', ') ?: '(ninguno)'));
 
         if (! $this->option('force') && ! $this->confirm('¿Continuar y reemplazar el catálogo de premios en esta base de datos?')) {
             return self::SUCCESS;
         }
 
-        DB::transaction(function () use ($catalog, $staleCategories, $rewardIdsToDelete) {
+        DB::transaction(function () use ($catalog, $staleCategories, $rewardIdsToDelete, $bannerCatalog, $staleBanners) {
             Reward::whereIn('id', $rewardIdsToDelete)->get()->each(fn (Reward $reward) => $reward->forceDelete());
 
             RewardCategory::whereIn('id', $staleCategories->pluck('id'))->delete();
@@ -99,9 +109,32 @@ class ResyncDemoCatalog extends Command
                     );
                 }
             }
+
+            foreach ($staleBanners as $banner) {
+                Storage::disk('public')->delete($banner->image_path);
+                $banner->delete();
+            }
+
+            foreach ($bannerCatalog as $banner) {
+                $path = 'banners/demo-'.$banner['source'];
+                $sourcePath = public_path('img/marketing/'.$banner['source']);
+
+                if (! file_exists($sourcePath)) {
+                    continue;
+                }
+
+                if (! Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->put($path, file_get_contents($sourcePath));
+                }
+
+                Banner::updateOrCreate(
+                    ['image_path' => $path],
+                    ['title' => $banner['title'], 'link_url' => route('portal.rewards.index'), 'order' => $banner['order'], 'is_active' => true]
+                );
+            }
         });
 
-        $this->info('Catálogo de premios resincronizado con el contenido real de H&L.');
+        $this->info('Catálogo de premios y banners de demo resincronizados con el contenido real de H&L.');
 
         return self::SUCCESS;
     }
