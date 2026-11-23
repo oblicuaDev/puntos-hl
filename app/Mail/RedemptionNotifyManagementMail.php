@@ -16,6 +16,7 @@ class RedemptionNotifyManagementMail extends Mailable
     public function build(): self
     {
         return $this->subject('Nuevo canje de puntos — '.$this->redemption->code)
-            ->markdown('emails.redemption-notify-management', ['redemption' => $this->redemption]);
+            ->view('emails.redemption-notify-management', ['redemption' => $this->redemption])
+            ->text('emails.redemption-notify-management-text', ['redemption' => $this->redemption]);
     }
 }

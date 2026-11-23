@@ -16,6 +16,7 @@ class RedemptionConfirmedMail extends Mailable
     public function build(): self
     {
         return $this->subject('Confirmación de tu canje — Plan de Fidelización Harker Lloreda')
-            ->markdown('emails.redemption-confirmed', ['redemption' => $this->redemption]);
+            ->view('emails.redemption-confirmed', ['redemption' => $this->redemption])
+            ->text('emails.redemption-confirmed-text', ['redemption' => $this->redemption]);
     }
 }
