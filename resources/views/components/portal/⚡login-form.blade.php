@@ -48,7 +48,7 @@ new class extends Component
         Auth::guard('patient')->login($patient, remember: true);
         session()->regenerate();
 
-        $this->redirectRoute($patient->must_change_password ? 'portal.password.edit' : 'portal.dashboard');
+        $this->redirectRoute($patient->must_change_password ? 'portal.password.edit' : 'portal.rewards.index');
     }
 };
 ?>

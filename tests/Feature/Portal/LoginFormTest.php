@@ -44,7 +44,7 @@ class LoginFormTest extends TestCase
             ->set('identifier', 'ana@example.com')
             ->set('password', '1010101010')
             ->call('login')
-            ->assertRedirect(route('portal.dashboard'));
+            ->assertRedirect(route('portal.rewards.index'));
     }
 
     public function test_rejects_wrong_password(): void

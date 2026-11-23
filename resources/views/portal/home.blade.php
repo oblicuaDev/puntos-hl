@@ -22,7 +22,6 @@
             </section>
 
             <section class="space-y-5">
-                <span class="inline-flex items-center rounded-full bg-dermo text-marino text-[11px] font-semibold uppercase tracking-wider px-3 py-1">Plan de fidelización</span>
                 <h1 class="text-3xl font-semibold text-marino leading-tight">Gana puntos en cada procedimiento, en el lugar donde ya confías</h1>
                 <p class="text-muted text-sm leading-relaxed">Hace parte de la experiencia Harker Lloreda: 15 años y más de 8.000 pacientes acompañados. Ahora, cada procedimiento de piel, cuerpo, cara y cabello también suma puntos para tus próximos tratamientos.</p>
             </section>

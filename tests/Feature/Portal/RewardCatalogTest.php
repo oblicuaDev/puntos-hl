@@ -70,21 +70,6 @@ class RewardCatalogTest extends TestCase
         $this->assertFalse($titles->contains('Corporal 1'));
     }
 
-    public function test_only_affordable_filter_respects_patient_balance(): void
-    {
-        // El paciente tiene 100 puntos = 10,000 COP a la tasa configurada.
-        Reward::create(['slug' => 'barato', 'title' => 'Barato', 'price_cop' => 5000]);
-        Reward::create(['slug' => 'caro', 'title' => 'Caro', 'price_cop' => 50000]);
-
-        $titles = Livewire::test('portal.reward-catalog')
-            ->set('onlyAffordable', true)
-            ->get('rewards')
-            ->pluck('title');
-
-        $this->assertTrue($titles->contains('Barato'));
-        $this->assertFalse($titles->contains('Caro'));
-    }
-
     public function test_searches_by_title(): void
     {
         Reward::create(['slug' => 'botox', 'title' => 'Botox Facial', 'price_cop' => 10000]);

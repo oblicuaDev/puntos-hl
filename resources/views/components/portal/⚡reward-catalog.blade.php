@@ -16,9 +16,6 @@ new class extends Component
     public ?int $categoryId = null;
 
     #[Url]
-    public bool $onlyAffordable = false;
-
-    #[Url]
     public string $sort = 'relevance';
 
     #[Computed]
@@ -36,8 +33,6 @@ new class extends Component
     #[Computed]
     public function rewards()
     {
-        $copPerPoint = (float) setting('cop_per_point', 100);
-
         return Reward::query()
             ->where('is_active', true)
             ->where(fn ($q) => $q->whereNull('valid_from')->orWhere('valid_from', '<=', now()))
@@ -47,7 +42,6 @@ new class extends Component
                     ->orWhere('short_description', 'like', "%{$this->search}%");
             }))
             ->when($this->categoryId, fn ($q) => $q->where('category_id', $this->categoryId))
-            ->when($this->onlyAffordable, fn ($q) => $q->where('price_cop', '<=', $this->balance * $copPerPoint))
             ->when($this->sort === 'points_asc', fn ($q) => $q->orderBy('price_cop'))
             ->when($this->sort === 'points_desc', fn ($q) => $q->orderByDesc('price_cop'))
             ->when($this->sort === 'newest', fn ($q) => $q->latest())
@@ -64,7 +58,7 @@ new class extends Component
         <p class="text-sm text-muted mt-1">Tienes <span class="font-semibold text-azul">{{ number_format($this->balance) }} pts</span> para canjear.</p>
     </div>
 
-    @php $catalogTargets = 'search,categoryId,onlyAffordable,sort'; @endphp
+    @php $catalogTargets = 'search,categoryId,sort'; @endphp
 
     <div class="relative">
         <span wire:loading.remove wire:target="{{ $catalogTargets }}" class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -86,11 +80,7 @@ new class extends Component
         @endforeach
     </div>
 
-    <div class="flex items-center justify-between gap-3 text-sm">
-        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" wire:model.live="onlyAffordable" class="rounded border-black/20 text-azul focus:ring-azul">
-            Solo los que puedo canjear
-        </label>
+    <div class="flex items-center justify-end gap-3 text-sm">
         <select wire:model.live="sort" aria-label="Ordenar premios" class="rounded-xl pl-3 pr-8 py-2 bg-white border border-black/10 focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none text-sm">
             <option value="relevance">Destacados</option>
             <option value="points_asc">Menos puntos</option>
