@@ -31,7 +31,7 @@ class DemoCatalogSeeder extends Seeder
             $this->seedRewards();
         }
 
-        if (Banner::where('image_path', 'banners/demo-bienestar.webp')->doesntExist()) {
+        if (Banner::where('image_path', 'banners/demo-hero-bienestar.webp')->doesntExist()) {
             $this->seedBanners();
         }
     }
