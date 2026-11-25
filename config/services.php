@@ -41,6 +41,18 @@ return [
         'site_url' => env('HARKER_SITE_URL', 'https://harkerlloreda.com'),
     ],
 
+    // Envío de SMS (códigos OTP de ingreso). SMS_DRIVER=log escribe el mensaje
+    // en el log en vez de enviarlo (desarrollo/pruebas); smsto usa sms.to.
+    'sms' => [
+        'driver' => env('SMS_DRIVER', 'log'),
+    ],
+
+    'smsto' => [
+        'api_key' => env('SMSTO_API_KEY'),
+        'sender_id' => env('SMSTO_SENDER_ID'),
+        'base_url' => env('SMSTO_BASE_URL', 'https://api.sms.to'),
+    ],
+
     // Payzen/Izipay (Lyra). Ver app/Services/Payments/PayzenGateway.php y
     // PAYMENTS_DRIVER en .env.
     'payzen' => [

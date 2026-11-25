@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Carga masiva de saldos iniciales de puntos desde la base "PUNTOS POR
@@ -24,8 +25,10 @@ use Illuminate\Support\Facades\Storage;
  * - Cada saldo se registra como lote (point_batches) + movimiento 'earned',
  *   ambos ligados a un registro point_imports (archivo, hash, tasa, fechas).
  * - Idempotente: un paciente que ya recibió saldo inicial no se vuelve a cargar.
- * - Pacientes nuevos: contraseña inicial = documento, con cambio obligatorio
- *   en el primer ingreso (igual que la creación manual desde el admin).
+ * - Pacientes nuevos: sin contraseña; ingresan con documento + código SMS
+ *   al celular importado (HL-25).
+ * - Un paciente que se registró solo en el portal con OTRO celular no recibe
+ *   el saldo (se rechaza): podría ser alguien suplantando esa cédula.
  */
 class ImportOpeningBalances extends Command
 {
@@ -195,7 +198,11 @@ class ImportOpeningBalances extends Command
                     $action = 'actualizar';
                     $existingPhone = preg_replace('/\D/', '', (string) $patient->phone);
                     if ($existingPhone !== '' && $phoneDigits !== '' && $existingPhone !== $phoneDigits) {
-                        $warnings[] = 'El paciente ya existe con otro teléfono; se conserva el actual';
+                        if ($patient->registration_source === 'self_registered') {
+                            $errors[] = 'Ya existe una cuenta auto-registrada con este documento y otro celular; verificar identidad antes de asignar el saldo';
+                        } else {
+                            $warnings[] = 'El paciente ya existe con otro teléfono; se conserva el actual';
+                        }
                     }
                 }
             }
@@ -273,9 +280,9 @@ class ImportOpeningBalances extends Command
                         'last_name' => $last,
                         'email' => $row['email'] ?: null,
                         'phone' => $row['phone'],
-                        // Contraseña inicial = documento, con cambio obligatorio en el primer ingreso.
-                        'password' => $row['document'],
-                        'must_change_password' => true,
+                        // Sin contraseña: el ingreso al portal es por código SMS (HL-25).
+                        'password' => Str::random(64),
+                        'must_change_password' => false,
                         'registration_source' => 'manual_admin',
                         'status' => 'active',
                     ]);

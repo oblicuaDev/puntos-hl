@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\EnsureAdminRole;
-use App\Http\Middleware\EnsurePatientPasswordChanged;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin.role' => EnsureAdminRole::class,
-            'patient.password_changed' => EnsurePatientPasswordChanged::class,
         ]);
 
         // El guard "admin" redirige por su cuenta (ver EnsureAdminRole); este

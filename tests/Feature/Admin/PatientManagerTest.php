@@ -24,7 +24,7 @@ class PatientManagerTest extends TestCase
         ]);
     }
 
-    public function test_registers_a_patient_with_the_document_number_as_initial_password(): void
+    public function test_registers_a_patient_without_using_the_document_as_password(): void
     {
         $admin = $this->adminUser();
         $this->actingAs($admin, 'admin');
@@ -40,8 +40,9 @@ class PatientManagerTest extends TestCase
         $patient = Patient::where('document_number', '1122334455')->first();
 
         $this->assertNotNull($patient);
-        $this->assertTrue(Hash::check('1122334455', $patient->password));
-        $this->assertTrue($patient->must_change_password);
+        $this->assertFalse(Hash::check('1122334455', $patient->password));
+        $this->assertFalse($patient->must_change_password);
+        $this->assertSame('+573001234567', $patient->phone);
         $this->assertSame('manual_admin', $patient->registration_source);
         $this->assertSame($admin->id, $patient->created_by_admin_user_id);
         $this->assertSame('active', $patient->status);
@@ -55,6 +56,7 @@ class PatientManagerTest extends TestCase
             ->set('document_number', '9988776655')
             ->set('first_name', 'Luis')
             ->set('last_name', 'Gómez')
+            ->set('phone', '3109876543')
             ->call('save')
             ->assertHasNoErrors();
 
@@ -99,7 +101,7 @@ class PatientManagerTest extends TestCase
             ->assertHasNoErrors();
 
         $patient->refresh();
-        $this->assertSame('3009999999', $patient->phone);
+        $this->assertSame('+573009999999', $patient->phone);
         $this->assertSame($originalHash, $patient->password);
     }
 

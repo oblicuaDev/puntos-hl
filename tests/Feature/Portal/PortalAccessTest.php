@@ -15,23 +15,7 @@ class PortalAccessTest extends TestCase
         $this->get('/mi-cuenta')->assertRedirect(route('portal.login'));
     }
 
-    public function test_authenticated_patient_with_must_change_password_is_forced_to_change_it(): void
-    {
-        $patient = Patient::create([
-            'document_number' => '111',
-            'first_name' => 'Ana',
-            'last_name' => 'Pérez',
-            'password' => '111',
-            'must_change_password' => true,
-        ]);
-        $this->actingAs($patient, 'patient');
-
-        $this->get('/mi-cuenta')->assertRedirect(route('portal.password.edit'));
-        $this->get('/premios')->assertRedirect(route('portal.password.edit'));
-        $this->get('/cambiar-password')->assertOk();
-    }
-
-    public function test_patient_with_changed_password_can_browse_normally(): void
+    public function test_authenticated_patient_can_browse_normally(): void
     {
         $patient = Patient::create([
             'document_number' => '222',

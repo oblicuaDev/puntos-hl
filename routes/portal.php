@@ -39,13 +39,8 @@ Route::post('/logout', function () {
     return redirect()->away(config('services.harker.site_url'));
 })->middleware('auth:patient')->name('portal.logout');
 
-// Autenticado, pero accesible aunque deba cambiar la contraseña.
+// Autenticado (ingreso por código SMS; los pacientes no tienen contraseña).
 Route::middleware('auth:patient')->group(function () {
-    Route::view('/cambiar-password', 'portal.change-password')->name('portal.password.edit');
-});
-
-// Autenticado y con contraseña ya cambiada.
-Route::middleware(['auth:patient', 'patient.password_changed'])->group(function () {
     Route::view('/mi-cuenta', 'portal.dashboard')->name('portal.dashboard');
     Route::view('/premios', 'portal.rewards.index')->name('portal.rewards.index');
 

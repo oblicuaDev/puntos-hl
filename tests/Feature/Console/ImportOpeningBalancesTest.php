@@ -6,6 +6,7 @@ use App\Models\Patient;
 use App\Models\PointImport;
 use App\Services\SettingsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -65,7 +66,7 @@ class ImportOpeningBalancesTest extends TestCase
         $this->assertSame(26186, $sandra->pointsBalance()); // 1 pt por cada $1.000, no la columna de la base
         $this->assertSame('+573125378053', $sandra->phone);
         $this->assertSame('Reyes Sandra', $sandra->fullName());
-        $this->assertTrue($sandra->must_change_password);
+        $this->assertFalse(Hash::check('52287290', $sandra->password));
 
         $movement = $sandra->pointMovements()->sole();
         $this->assertSame('earned', $movement->type);
@@ -86,6 +87,18 @@ class ImportOpeningBalancesTest extends TestCase
         $this->assertSame(5500, $existing->pointsBalance());
         $this->assertSame('+573000000005', $existing->phone);
         $this->assertSame('Ya Existe', $existing->fullName());
+    }
+
+    public function test_does_not_give_the_balance_to_a_self_registered_account_with_another_phone(): void
+    {
+        Patient::create([
+            'document_number' => '52287290', 'first_name' => 'Otra', 'last_name' => 'Persona',
+            'phone' => '+573999999999', 'password' => 'x', 'registration_source' => 'self_registered',
+        ]);
+
+        $this->artisan('patients:import-opening-balances', ['file' => $this->csv, '--commit' => true])->assertSuccessful();
+
+        $this->assertSame(0, Patient::where('document_number', '52287290')->sole()->pointsBalance());
     }
 
     public function test_running_twice_does_not_duplicate_balances(): void

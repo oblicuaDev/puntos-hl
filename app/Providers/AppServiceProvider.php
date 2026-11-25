@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Services\Payments\PaymentGatewayContract;
 use App\Services\Payments\PayzenGateway;
 use App\Services\Payments\StubPaymentGateway;
+use App\Services\Sms\LogSmsSender;
+use App\Services\Sms\SmsSender;
+use App\Services\Sms\SmsToSender;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +17,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(SmsSender::class, function () {
+            return match (config('services.sms.driver')) {
+                'smsto' => $this->app->make(SmsToSender::class),
+                default => $this->app->make(LogSmsSender::class),
+            };
+        });
+
         $this->app->bind(PaymentGatewayContract::class, function () {
             return match (config('payments.driver')) {
                 'payzen' => $this->app->make(PayzenGateway::class),

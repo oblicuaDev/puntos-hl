@@ -2,7 +2,9 @@
 
 use App\Models\AdminUser;
 use App\Models\Patient;
+use App\Support\Phone;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -69,7 +71,11 @@ new class extends Component
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'nullable|email|unique:patients,email,'.($this->editingId ?: 'NULL'),
-            'phone' => 'nullable|string|max:30',
+            'phone' => ['required', 'string', 'max:30', function ($attribute, $value, $fail) {
+                if (! Phone::normalize($value)) {
+                    $fail('Ingresa un celular válido (10 dígitos, o con indicativo si es de otro país).');
+                }
+            }],
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'birthdate' => 'nullable|date',
@@ -103,14 +109,15 @@ new class extends Component
     {
         $data = $this->validate();
         $data['email'] = $data['email'] ?: null;
+        $data['phone'] = Phone::normalize($data['phone']);
 
         if ($this->editingId) {
             Patient::whereKey($this->editingId)->update($data);
         } else {
-            // Contraseña inicial = cédula (el admin/asesor ya la conoce, no se expone en ningún lado).
-            // must_change_password obliga a cambiarla en el primer login del portal.
-            $data['password'] = $data['document_number'];
-            $data['must_change_password'] = true;
+            // Sin contraseña: el paciente ingresa al portal con un código SMS
+            // enviado a este celular (HL-25). Se guarda un valor aleatorio inutilizable.
+            $data['password'] = Str::random(64);
+            $data['must_change_password'] = false;
             $data['registration_source'] = 'manual_admin';
             $data['created_by_admin_user_id'] = Auth::guard('admin')->id();
             $data['status'] = 'active';
@@ -160,7 +167,7 @@ new class extends Component
     <x-admin.modal :title="$editingId ? 'Editar paciente' : 'Registrar paciente'" onClose="closeModal" maxWidth="max-w-3xl">
     <form wire:submit="save" class="space-y-5">
         @if (! $editingId)
-            <p class="text-xs text-muted">La contraseña inicial será su número de documento. Deberá cambiarla en su primer ingreso.</p>
+            <p class="text-xs text-muted">El paciente ingresa al portal con su documento y un código que le llega por SMS a este celular.</p>
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
