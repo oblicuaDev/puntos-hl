@@ -15,6 +15,7 @@
         "livewire/livewire": "^4.4",
         "livewire/volt": "^1.11",
         "mews/purifier": "^3.4",
+        "openspout/openspout": "^5.3",
         "predis/predis": "^3.7",
         "spatie/laravel-activitylog": "^4.0 || ^5.0"
     },

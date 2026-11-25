@@ -81,3 +81,8 @@ h1, h2, h3, h4 {
         margin-top: 0.25em;
     }
 }
+
+/* Oculta elementos de Alpine (x-cloak) hasta que Alpine inicializa. */
+[x-cloak] {
+    display: none !important;
+}

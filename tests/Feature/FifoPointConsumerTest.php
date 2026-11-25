@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Patient;
 use App\Models\PointBatch;
+use App\Models\PointMovement;
 use App\Models\Redemption;
 use App\Models\Reward;
 use App\Services\Points\FifoPointConsumer;
@@ -151,5 +152,30 @@ class FifoPointConsumerTest extends TestCase
 
         $this->assertSame(100, $batch->points_remaining);
         $this->assertSame(100, $patient->pointsBalance());
+    }
+
+    public function test_history_matches_balance_when_reversing_into_an_already_expired_batch(): void
+    {
+        $patient = $this->makePatient();
+
+        PointBatch::create([
+            'patient_id' => $patient->id, 'points_original' => 100, 'points_remaining' => 100,
+            'earned_at' => now(), 'expires_at' => now()->addDays(10), 'status' => 'active',
+        ]);
+        PointMovement::create([
+            'patient_id' => $patient->id, 'type' => 'earned', 'points' => 100,
+            'description' => 'Compra', 'occurred_at' => now(),
+        ]);
+
+        $redemption = $this->makeRedemption($patient);
+        app(FifoPointConsumer::class)->consume($redemption, 60);
+
+        // El lote vence mientras el canje sigue pendiente; luego se rechaza.
+        $this->travel(11)->days();
+        $this->artisan('points:expire-batches');
+        app(FifoPointConsumer::class)->reverse($redemption);
+
+        $this->assertSame(0, $patient->pointsBalance());
+        $this->assertSame(0, (int) $patient->pointMovements()->sum('points'));
     }
 }

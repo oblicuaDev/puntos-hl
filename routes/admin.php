@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MovementsReportController;
 use App\Http\Controllers\Admin\SsoController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,7 @@ Route::middleware('admin.role:admin')->group(function () {
     Route::view('/rewards', 'admin.rewards.index')->name('rewards.index');
     Route::view('/banners', 'admin.banners.index')->name('banners.index');
     Route::view('/legal', 'admin.legal.edit')->name('legal.edit');
+
+    // Reporte Excel de movimientos de puntos (HL-26).
+    Route::get('/reportes/movimientos', MovementsReportController::class)->name('reports.movements');
 });

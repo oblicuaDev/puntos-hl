@@ -90,6 +90,7 @@ class FifoPointConsumer
             }
 
             $totalReversed = 0;
+            $expiredOnReturn = [];
 
             foreach ($consumptions as $consumption) {
                 $batch = PointBatch::lockForUpdate()->find($consumption->point_batch_id);
@@ -101,6 +102,10 @@ class FifoPointConsumer
                 $batch->points_remaining += $consumption->points_consumed;
                 $batch->status = $batch->expires_at->isPast() ? 'expired' : 'active';
                 $batch->save();
+
+                if ($batch->status === 'expired') {
+                    $expiredOnReturn[$batch->id] = ($expiredOnReturn[$batch->id] ?? 0) + $consumption->points_consumed;
+                }
 
                 $consumption->update(['reversed_at' => now()]);
                 $totalReversed += $consumption->points_consumed;
@@ -115,6 +120,21 @@ class FifoPointConsumer
                 'description' => "Reverso de puntos — canje {$redemption->code} rechazado/cancelado",
                 'occurred_at' => now(),
             ]);
+
+            // Puntos devueltos a un lote que ya venció: vuelven y vencen en el
+            // mismo instante. Se registra el vencimiento para que la suma del
+            // historial siga coincidiendo con el saldo disponible.
+            foreach ($expiredOnReturn as $batchId => $points) {
+                PointMovement::create([
+                    'patient_id' => $redemption->patient_id,
+                    'type' => 'expired',
+                    'points' => -$points,
+                    'related_type' => PointBatch::class,
+                    'related_id' => $batchId,
+                    'description' => "Vencimiento de puntos devueltos del canje {$redemption->code} (lote #{$batchId} ya vencido)",
+                    'occurred_at' => now(),
+                ]);
+            }
         });
     }
 }
