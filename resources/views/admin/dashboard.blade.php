@@ -1,11 +1,14 @@
 @php
     $admin = auth('admin')->user();
     $salesThisMonth = \App\Models\Sale::whereMonth('sale_date', now()->month)->whereYear('sale_date', now()->year);
+    // Puntos otorgados = movimientos de acumulación (ventas + saldos iniciales importados + ajustes a favor).
+    $earnedMovements = \App\Models\PointMovement::whereIn('type', ['earned', 'adjustment_credit']);
+    $pointsInCirculation = (int) \App\Models\PointBatch::where('status', 'active')->where('expires_at', '>', now())->sum('points_remaining');
 
     $stats = [
         ['icon' => 'o-users', 'label' => 'Pacientes', 'value' => \App\Models\Patient::count(), 'hint' => 'registrados'],
         ['icon' => 'o-banknotes', 'label' => 'Ventas este mes', 'value' => (clone $salesThisMonth)->count(), 'hint' => now()->format('m/Y')],
-        ['icon' => 'o-sparkles', 'label' => 'Puntos otorgados', 'value' => number_format((int) (clone $salesThisMonth)->sum('points_awarded')), 'hint' => 'este mes'],
+        ['icon' => 'o-sparkles', 'label' => 'Puntos otorgados', 'value' => number_format((int) (clone $earnedMovements)->whereBetween('occurred_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('points')), 'hint' => 'este mes · '.number_format($pointsInCirculation).' vigentes en total'],
         ['icon' => 'o-gift', 'label' => 'Premios activos', 'value' => \App\Models\Reward::where('is_active', true)->count(), 'hint' => 'disponibles en el catálogo'],
     ];
 
@@ -16,9 +19,9 @@
 
     // Últimas 8 semanas (lunes como inicio) para comparar puntos otorgados vs canjeados.
     $start = now()->startOfWeek()->subWeeks(7);
-    $grantedByWeek = \App\Models\Sale::where('sale_date', '>=', $start)->get()
-        ->groupBy(fn ($sale) => $sale->sale_date->copy()->startOfWeek()->format('Y-m-d'))
-        ->map(fn ($group) => (int) $group->sum('points_awarded'));
+    $grantedByWeek = (clone $earnedMovements)->where('occurred_at', '>=', $start)->get()
+        ->groupBy(fn ($movement) => $movement->occurred_at->copy()->startOfWeek()->format('Y-m-d'))
+        ->map(fn ($group) => (int) $group->sum('points'));
     $redeemedByWeek = \App\Models\Redemption::whereIn('status', ['approved', 'fulfilled'])->where('created_at', '>=', $start)->get()
         ->groupBy(fn ($redemption) => $redemption->created_at->copy()->startOfWeek()->format('Y-m-d'))
         ->map(fn ($group) => (int) $group->sum('points_used'));
