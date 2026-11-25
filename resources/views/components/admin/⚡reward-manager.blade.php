@@ -188,7 +188,7 @@ new class extends Component
                 <label class="block text-sm font-medium">Precio (COP)</label>
                 <input type="number" wire:model="price_cop" class="mt-1 w-full rounded px-3 py-2 border border-black/15 focus:border-azul focus:ring-1 focus:ring-azul focus:outline-none">
                 @error('price_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-                <p class="text-xs text-muted mt-1">≈ {{ number_format($price_cop ? intdiv($price_cop, max((int) setting('cop_per_point', 100), 1)) : 0) }} puntos a la tasa actual.</p>
+                <p class="text-xs text-muted mt-1">≈ {{ number_format($price_cop ? \App\Services\Points\PointRates::pointsNeededFor((int) $price_cop) : 0, 0, ',', '.') }} puntos a la tasa de redención actual.</p>
             </div>
             <div>
                 <label class="block text-sm font-medium">Stock (vacío = ilimitado)</label>

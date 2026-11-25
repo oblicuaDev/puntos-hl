@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'code', 'patient_id', 'reward_id', 'reward_title_snapshot', 'reward_price_cop_snapshot',
-    'points_used', 'money_amount_cop', 'points_percentage_applied', 'payment_method',
+    'points_used', 'money_amount_cop', 'points_percentage_applied', 'redemption_rate_applied', 'payment_method',
     'status', 'approved_at',
 ])]
 class Redemption extends Model

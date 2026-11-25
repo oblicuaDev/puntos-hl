@@ -18,7 +18,7 @@ class SaleManagerTest extends TestCase
     {
         parent::setUp();
 
-        app(SettingsService::class)->set('cop_per_point', 100, 'decimal');
+        app(SettingsService::class)->set('accrual_cop_per_point', 1000, 'decimal');
     }
 
     private function admin(): AdminUser
@@ -46,18 +46,19 @@ class SaleManagerTest extends TestCase
 
         Livewire::test('admin.sale-manager')
             ->call('selectPatient', $patient->id)
-            ->set('amount_cop', 50000)
+            ->set('amount_cop', 50900)
             ->call('save')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('sales', [
             'patient_id' => $patient->id,
             'admin_user_id' => $admin->id,
-            'amount_cop' => 50000,
-            'points_awarded' => 500, // 50000 / 100
+            'amount_cop' => 50900,
+            'points_awarded' => 50, // 1 punto por cada $1.000 completos
+            'exchange_rate_applied' => 1000,
         ]);
 
-        $this->assertSame(500, $patient->pointsBalance());
+        $this->assertSame(50, $patient->pointsBalance());
     }
 
     public function test_cannot_save_without_selecting_a_patient(): void

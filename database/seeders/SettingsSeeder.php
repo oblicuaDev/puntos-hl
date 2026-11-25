@@ -11,7 +11,8 @@ class SettingsSeeder extends Seeder
     {
         $settings = app(SettingsService::class);
 
-        $settings->set('cop_per_point', 100, 'decimal');
+        $settings->set('accrual_cop_per_point', 1000, 'decimal');
+        $settings->set('redemption_points_per_100_cop', 3, 'decimal');
         $settings->set('min_points_percentage', 10, 'decimal');
         $settings->set('points_expiration_months', 12, 'integer');
         $settings->set('management_notification_email', 'gerencia@harkerlloreda.com', 'string');

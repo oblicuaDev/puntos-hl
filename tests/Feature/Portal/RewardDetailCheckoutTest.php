@@ -19,7 +19,7 @@ class RewardDetailCheckoutTest extends TestCase
     {
         parent::setUp();
 
-        app(SettingsService::class)->set('cop_per_point', 100, 'decimal');
+        app(SettingsService::class)->set('redemption_points_per_100_cop', 1, 'decimal');
         app(SettingsService::class)->set('min_points_percentage', 10, 'decimal');
     }
 

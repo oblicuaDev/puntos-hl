@@ -6,8 +6,11 @@ use Livewire\Component;
 
 new class extends Component
 {
+    #[Validate('required|numeric|min:1')]
+    public float $accrual_cop_per_point;
+
     #[Validate('required|numeric|min:0.01')]
-    public float $cop_per_point;
+    public float $redemption_points_per_100_cop;
 
     #[Validate('required|numeric|min:0|max:100')]
     public float $min_points_percentage;
@@ -27,7 +30,8 @@ new class extends Component
     {
         $settings = app(SettingsService::class);
 
-        $this->cop_per_point = (float) $settings->get('cop_per_point');
+        $this->accrual_cop_per_point = (float) $settings->get('accrual_cop_per_point');
+        $this->redemption_points_per_100_cop = (float) $settings->get('redemption_points_per_100_cop');
         $this->min_points_percentage = (float) $settings->get('min_points_percentage');
         $this->points_expiration_months = (int) $settings->get('points_expiration_months');
         $this->abandoned_checkout_timeout_minutes = (int) $settings->get('abandoned_checkout_timeout_minutes');
@@ -39,7 +43,8 @@ new class extends Component
         $this->validate();
 
         $settings = app(SettingsService::class);
-        $settings->set('cop_per_point', $this->cop_per_point, 'decimal');
+        $settings->set('accrual_cop_per_point', $this->accrual_cop_per_point, 'decimal');
+        $settings->set('redemption_points_per_100_cop', $this->redemption_points_per_100_cop, 'decimal');
         $settings->set('min_points_percentage', $this->min_points_percentage, 'decimal');
         $settings->set('points_expiration_months', $this->points_expiration_months, 'integer');
         $settings->set('abandoned_checkout_timeout_minutes', $this->abandoned_checkout_timeout_minutes, 'integer');
@@ -61,9 +66,17 @@ new class extends Component
     @endif
 
     <div>
-        <label class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-banknotes', 'h-4 w-4 text-azul') Tasa de cambio (COP por punto)</label>
-        <input type="number" step="0.01" wire:model="cop_per_point" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
-        @error('cop_per_point') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+        <label for="accrual_cop_per_point" class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-banknotes', 'h-4 w-4 text-azul') Acumulación: COP pagados por cada punto ganado</label>
+        <input id="accrual_cop_per_point" type="number" step="1" wire:model="accrual_cop_per_point" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+        <p class="text-xs text-muted mt-1">Ej.: 1000 = el paciente gana 1 punto por cada $1.000 COP pagados. Se aplica a las ventas nuevas.</p>
+        @error('accrual_cop_per_point') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+    </div>
+
+    <div>
+        <label for="redemption_points_per_100_cop" class="flex items-center gap-1.5 text-sm font-medium">@svg('heroicon-o-gift', 'h-4 w-4 text-azul') Redención: puntos por cada $100 COP del procedimiento</label>
+        <input id="redemption_points_per_100_cop" type="number" step="0.01" wire:model="redemption_points_per_100_cop" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
+        <p class="text-xs text-muted mt-1">Ej.: 3 = un procedimiento de $100.000 cuesta 3.000 puntos. Cambia los precios en puntos del catálogo; no altera canjes ya hechos.</p>
+        @error('redemption_points_per_100_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>

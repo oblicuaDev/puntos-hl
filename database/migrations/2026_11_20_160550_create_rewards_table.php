@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('short_description')->nullable();
             $table->longText('body_html')->nullable();
             // price_cop es la única fuente de verdad del precio; el precio en puntos siempre se deriva
-            // de la tasa de cambio vigente (settings.cop_per_point), nunca se duplica aquí.
+            // de la tasa de redención vigente (settings.redemption_points_per_100_cop), nunca se duplica aquí.
             $table->unsignedBigInteger('price_cop');
             $table->unsignedInteger('stock')->nullable(); // null = ilimitado
             $table->boolean('is_active')->default(true);

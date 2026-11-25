@@ -16,7 +16,7 @@ class CancelAbandonedCheckoutsTest extends TestCase
 
     public function test_cancels_pending_checkouts_past_the_timeout_and_restores_points(): void
     {
-        app(SettingsService::class)->set('cop_per_point', 100, 'decimal');
+        app(SettingsService::class)->set('redemption_points_per_100_cop', 1, 'decimal');
         app(SettingsService::class)->set('abandoned_checkout_timeout_minutes', 30, 'integer');
 
         $patient = Patient::create([
@@ -50,7 +50,7 @@ class CancelAbandonedCheckoutsTest extends TestCase
 
     public function test_does_not_cancel_recent_pending_checkouts(): void
     {
-        app(SettingsService::class)->set('cop_per_point', 100, 'decimal');
+        app(SettingsService::class)->set('redemption_points_per_100_cop', 1, 'decimal');
         app(SettingsService::class)->set('abandoned_checkout_timeout_minutes', 30, 'integer');
 
         $patient = Patient::create([

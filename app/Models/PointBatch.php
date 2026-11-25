@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['patient_id', 'points_original', 'points_remaining', 'earned_at', 'expires_at', 'status'])]
+#[Fillable(['patient_id', 'points_original', 'points_remaining', 'earned_at', 'expires_at', 'status', 'sourceable_type', 'sourceable_id'])]
 class PointBatch extends Model
 {
     protected function casts(): array

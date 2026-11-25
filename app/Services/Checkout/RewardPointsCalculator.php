@@ -4,6 +4,7 @@ namespace App\Services\Checkout;
 
 use App\Models\Patient;
 use App\Models\Reward;
+use App\Services\Points\PointRates;
 
 /**
  * Límites autoritativos del slider puntos/dinero para un premio y un
@@ -16,12 +17,14 @@ class RewardPointsCalculator
         public readonly int $totalPointsEquivalent,
         public readonly int $minPoints,
         public readonly int $maxPoints,
+        /** Valor en COP de 1 punto al redimir (100 / puntos por cada $100). */
         public readonly float $copPerPoint,
+        public readonly float $redemptionRate,
     ) {}
 
     public static function forPatient(Reward $reward, Patient $patient): self
     {
-        $copPerPoint = (float) setting('cop_per_point', 100);
+        $redemptionRate = PointRates::redemptionPointsPer100Cop();
         $minPercentage = (float) setting('min_points_percentage', 10);
 
         $total = $reward->pointsEquivalent();
@@ -34,7 +37,8 @@ class RewardPointsCalculator
             totalPointsEquivalent: $total,
             minPoints: min($minPoints, $total),
             maxPoints: $maxPoints,
-            copPerPoint: $copPerPoint,
+            copPerPoint: PointRates::copValuePerRedeemedPoint(),
+            redemptionRate: $redemptionRate,
         );
     }
 

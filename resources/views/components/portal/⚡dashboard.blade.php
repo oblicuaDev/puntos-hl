@@ -23,7 +23,7 @@ new class extends Component
     #[Computed]
     public function nextReward(): ?Reward
     {
-        $copPerPoint = (float) setting('cop_per_point', 100);
+        $copPerPoint = \App\Services\Points\PointRates::copValuePerRedeemedPoint();
 
         return Reward::query()
             ->where('is_active', true)

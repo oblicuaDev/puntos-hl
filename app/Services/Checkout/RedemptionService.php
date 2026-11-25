@@ -61,6 +61,7 @@ class RedemptionService
                 'points_percentage_applied' => $limits->totalPointsEquivalent > 0
                     ? round(($pointsToUse / $limits->totalPointsEquivalent) * 100, 2)
                     : 0,
+                'redemption_rate_applied' => $limits->redemptionRate,
                 'payment_method' => $isPointsOnly ? 'points_only' : 'mixed',
                 'status' => 'pending_payment',
             ]);

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * Lectura/escritura cacheada de la configuración general del plan de
- * fidelización (tasa COP->puntos, % mínimo en puntos, vigencia de puntos, etc.).
+ * fidelización (tasas de acumulación y redención, % mínimo en puntos, vigencia de puntos, etc.).
  */
 class SettingsService
 {
@@ -16,7 +16,8 @@ class SettingsService
     private const CACHE_KEY = 'hlfid:settings';
 
     private const DEFAULTS = [
-        'cop_per_point' => ['value' => 100, 'type' => 'decimal'],
+        'accrual_cop_per_point' => ['value' => 1000, 'type' => 'decimal'],
+        'redemption_points_per_100_cop' => ['value' => 3, 'type' => 'decimal'],
         'min_points_percentage' => ['value' => 10, 'type' => 'decimal'],
         'points_expiration_months' => ['value' => 12, 'type' => 'integer'],
         'management_notification_email' => ['value' => 'gerencia@harkerlloreda.com', 'type' => 'string'],

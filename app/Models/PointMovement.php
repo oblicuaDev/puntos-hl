@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['patient_id', 'type', 'points', 'description', 'occurred_at'])]
+#[Fillable(['patient_id', 'type', 'points', 'related_type', 'related_id', 'description', 'occurred_at'])]
 class PointMovement extends Model
 {
     protected function casts(): array

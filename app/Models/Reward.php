@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Points\PointRates;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,13 +46,11 @@ class Reward extends Model
     }
 
     /**
-     * Precio en puntos, derivado siempre de la tasa de cambio vigente.
+     * Precio en puntos, derivado siempre de la tasa de REDENCIÓN vigente.
      * price_cop es la única fuente de verdad; esto nunca se persiste.
      */
     public function pointsEquivalent(): int
     {
-        $copPerPoint = (float) setting('cop_per_point', 100);
-
-        return (int) ceil($this->price_cop / max($copPerPoint, 0.01));
+        return PointRates::pointsNeededFor((int) $this->price_cop);
     }
 }

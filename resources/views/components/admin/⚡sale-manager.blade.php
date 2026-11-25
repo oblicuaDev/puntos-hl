@@ -4,6 +4,7 @@ use App\Models\Patient;
 use App\Models\Procedure;
 use App\Models\Sale;
 use App\Services\Points\PointAccrualService;
+use App\Services\Points\PointRates;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -100,8 +101,10 @@ new class extends Component
             return;
         }
 
-        $exchangeRate = (float) setting('cop_per_point', 100);
-        $pointsAwarded = (int) round($this->amount_cop / max($exchangeRate, 0.01));
+        // Solo la tasa de ACUMULACIÓN; se guarda en la venta para que un cambio
+        // posterior de la tasa no altere los puntos ya otorgados.
+        $exchangeRate = PointRates::accrualCopPerPoint();
+        $pointsAwarded = PointRates::pointsEarnedFor((int) $this->amount_cop, $exchangeRate);
 
         $sale = DB::transaction(function () use ($exchangeRate, $pointsAwarded) {
             $sale = Sale::create([
@@ -191,7 +194,7 @@ new class extends Component
             <label class="block text-sm font-medium">Valor de la venta (COP)</label>
             <input type="number" wire:model="amount_cop" class="mt-1.5 w-full rounded-xl px-3 py-2.5 border border-black/10 bg-white focus:border-azul focus:ring-2 focus:ring-azul/20 focus:outline-none">
             @error('amount_cop') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
-            <p class="text-xs text-muted mt-1">Tasa vigente: {{ number_format(setting('cop_per_point', 100), 0, ',', '.') }} COP por punto.</p>
+            <p class="text-xs text-muted mt-1">Acumulación vigente: 1 punto por cada ${{ number_format(\App\Services\Points\PointRates::accrualCopPerPoint(), 0, ',', '.') }} COP pagados.</p>
         </div>
 
         <div>

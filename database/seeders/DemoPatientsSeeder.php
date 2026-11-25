@@ -10,6 +10,7 @@ use App\Models\Sale;
 use App\Services\Checkout\InvalidCheckoutException;
 use App\Services\Checkout\RedemptionService;
 use App\Services\Points\PointAccrualService;
+use App\Services\Points\PointRates;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
@@ -155,7 +156,7 @@ class DemoPatientsSeeder extends Seeder
     private function createSalesFor(Patient $patient, $admins, $procedures, int $index): void
     {
         $saleCount = $index === 0 ? 4 : random_int(1, 4);
-        $exchangeRate = (float) setting('cop_per_point', 100);
+        $exchangeRate = PointRates::accrualCopPerPoint();
 
         for ($s = 0; $s < $saleCount; $s++) {
             $saleDate = Carbon::now()->subMonths(random_int(0, 9))->subDays(random_int(0, 27));
@@ -170,7 +171,7 @@ class DemoPatientsSeeder extends Seeder
                     'procedure_id' => random_int(1, 10) <= 7 ? $procedures->random()?->id : null,
                     'amount_cop' => $amount,
                     'exchange_rate_applied' => $exchangeRate,
-                    'points_awarded' => (int) round($amount / max($exchangeRate, 0.01)),
+                    'points_awarded' => PointRates::pointsEarnedFor($amount, $exchangeRate),
                     'sale_date' => $saleDate->toDateString(),
                     'notes' => null,
                 ]);

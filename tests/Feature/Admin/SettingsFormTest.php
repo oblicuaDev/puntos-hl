@@ -24,7 +24,8 @@ class SettingsFormTest extends TestCase
         $this->actingAs($admin, 'admin');
 
         Livewire::test('admin.settings-form')
-            ->set('cop_per_point', 120)
+            ->set('accrual_cop_per_point', 2000)
+            ->set('redemption_points_per_100_cop', 4)
             ->set('min_points_percentage', 15)
             ->set('points_expiration_months', 10)
             ->set('abandoned_checkout_timeout_minutes', 45)
@@ -34,7 +35,8 @@ class SettingsFormTest extends TestCase
             ->assertSet('saved', true);
 
         $settings = app(SettingsService::class);
-        $this->assertEquals(120, $settings->get('cop_per_point'));
+        $this->assertEquals(2000, $settings->get('accrual_cop_per_point'));
+        $this->assertEquals(4, $settings->get('redemption_points_per_100_cop'));
         $this->assertEquals(15, $settings->get('min_points_percentage'));
         $this->assertEquals(10, $settings->get('points_expiration_months'));
         $this->assertEquals(45, $settings->get('abandoned_checkout_timeout_minutes'));

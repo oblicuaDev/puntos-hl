@@ -19,7 +19,7 @@ class RewardCatalogTest extends TestCase
     {
         parent::setUp();
 
-        app(SettingsService::class)->set('cop_per_point', 100, 'decimal');
+        app(SettingsService::class)->set('redemption_points_per_100_cop', 1, 'decimal');
 
         $patient = Patient::create([
             'document_number' => '999',
