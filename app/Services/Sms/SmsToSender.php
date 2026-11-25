@@ -33,13 +33,18 @@ class SmsToSender implements SmsSender
 
         if (! $response->successful() || $response->json('success') === false) {
             // Nunca se registra el cuerpo del mensaje: contiene el código OTP.
-            Log::warning('sms.to rechazó un envío', [
+            // Nivel error (no warning): producción corre con LOG_LEVEL=error.
+            Log::error('sms.to rechazó un envío', [
                 'status' => $response->status(),
                 'error' => $response->json('message'),
                 'to_suffix' => substr($to, -4),
             ]);
 
-            throw new SmsDeliveryException('No se pudo enviar el SMS (HTTP '.$response->status().').');
+            $reason = $response->status() === 402
+                ? 'la cuenta de sms.to no tiene saldo'
+                : 'HTTP '.$response->status();
+
+            throw new SmsDeliveryException("No se pudo enviar el SMS ({$reason}).");
         }
     }
 }
