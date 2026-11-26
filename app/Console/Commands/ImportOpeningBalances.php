@@ -7,6 +7,7 @@ use App\Models\PointBatch;
 use App\Models\PointImport;
 use App\Models\PointMovement;
 use App\Services\Points\PointRates;
+use App\Support\PersonName;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -271,7 +272,7 @@ class ImportOpeningBalances extends Command
                 }
 
                 if ($row['action'] === 'crear') {
-                    [$first, $last] = $this->splitName($row['name']);
+                    [$first, $last] = PersonName::split($row['name']);
 
                     $patient = Patient::create([
                         'document_type' => 'CC',
@@ -328,24 +329,5 @@ class ImportOpeningBalances extends Command
 
             return $import;
         });
-    }
-
-    /**
-     * La base trae el nombre en un solo campo y en orden variable
-     * ("REYES SANDRA" / "MARIA CLAUDIA RUIZ DURAN"), así que no se puede
-     * separar nombre/apellido con certeza. Se parte por la mitad para que
-     * nombre + apellido reproduzca exactamente el nombre original.
-     */
-    private function splitName(string $name): array
-    {
-        $words = explode(' ', mb_convert_case(mb_strtolower($name), MB_CASE_TITLE, 'UTF-8'));
-
-        if (count($words) === 1) {
-            return [$words[0], '-'];
-        }
-
-        $half = intdiv(count($words), 2);
-
-        return [implode(' ', array_slice($words, 0, $half)), implode(' ', array_slice($words, $half))];
     }
 }

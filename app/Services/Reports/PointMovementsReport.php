@@ -2,6 +2,7 @@
 
 namespace App\Services\Reports;
 
+use App\Models\BillingRecord;
 use App\Models\PointBatch;
 use App\Models\PointImport;
 use App\Models\PointMovement;
@@ -70,6 +71,7 @@ class PointMovementsReport
                     Redemption::class => [],
                     PointImport::class => [],
                     PointBatch::class => [],
+                    BillingRecord::class => [],
                 ]);
 
                 foreach ($movements as $movement) {
@@ -104,6 +106,11 @@ class PointMovementsReport
                 (int) $related->amount_cop,
                 null,
                 $related->procedure?->name ? 'Compra: '.$related->procedure->name : 'Compra registrada',
+            ],
+            $related instanceof BillingRecord => [
+                (int) $related->amount_cop,
+                null,
+                'Facturación del '.$related->invoice_date->format('d/m/Y').' (hoja de facturación, fila '.$related->sheet_row.')',
             ],
             $related instanceof Redemption => [
                 (int) $related->reward_price_cop_snapshot,

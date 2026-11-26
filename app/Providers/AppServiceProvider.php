@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\BillingSheet\BillingSheet;
+use App\Services\BillingSheet\GoogleBillingSheet;
 use App\Services\Payments\PaymentGatewayContract;
 use App\Services\Payments\PayzenGateway;
 use App\Services\Payments\StubPaymentGateway;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
                 default => $this->app->make(LogSmsSender::class),
             };
         });
+
+        $this->app->bind(BillingSheet::class, GoogleBillingSheet::class);
 
         $this->app->bind(PaymentGatewayContract::class, function () {
             return match (config('payments.driver')) {

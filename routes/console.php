@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('points:expire-batches')->dailyAt('02:00');
 Schedule::command('checkout:cancel-abandoned')->everyFiveMinutes();
+Schedule::command('points:sync-billing-sheet')->dailyAt('06:00')->timezone('America/Bogota')->withoutOverlapping();

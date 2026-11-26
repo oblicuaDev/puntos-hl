@@ -53,6 +53,17 @@ return [
         'base_url' => env('SMSTO_BASE_URL', 'https://api.sms.to'),
     ],
 
+    // Carga diaria de facturación desde Google Sheets (HL-28). La hoja se
+    // comparte como Editor con el client_email del JSON de la cuenta de
+    // servicio. Sin fecha de corte la carga no procesa nada: las facturas
+    // hasta esa fecha ya vienen en los saldos iniciales (HL-24).
+    'billing_sheet' => [
+        'credentials' => env('GOOGLE_SHEETS_CREDENTIALS', storage_path('app/private/google-service-account.json')),
+        'spreadsheet_id' => env('BILLING_SHEET_ID'),
+        'gid' => (int) env('BILLING_SHEET_GID', 0),
+        'cutoff_date' => env('BILLING_SHEET_CUTOFF_DATE'),
+    ],
+
     // Payzen/Izipay (Lyra). Ver app/Services/Payments/PayzenGateway.php y
     // PAYMENTS_DRIVER en .env.
     'payzen' => [
